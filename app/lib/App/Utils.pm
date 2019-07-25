@@ -49,6 +49,33 @@ sub to_db_timestamp {
     return shift->parse_datetime(@_)->datetime;
 }
 
+sub send_to_db {
+    my ($self,$param) = (@_);
+    my $action = $param->{action};
+    my $stmt   = $param->{stmt};
+    my $entity = $param->{entity};
+    my $bind   = $param->{bind};
+    my $output = $param->{output} // undef;
+    my $dbh = $self->{_db}; #database handle
+    my $sth = $dbh->prepare($stmt);
+    my $result;
+    $result->{result} = 0;
+    $result->{message} = "Error occured while ${action}ing $entity";
+    eval {
+        my $res = $sth->execute(@$bind);
+        $result->{output} = $res if (defined $output);
+        $result->{result} = 1;
+        $result->{message} = "$entity ${action}ed successfully";
+    };
+
+    if($@) {
+        warn "$@";
+    }
+
+    return $result;
+}
+
+
 sub get_users {
     my $self = shift;
     my $type = shift || 'name';

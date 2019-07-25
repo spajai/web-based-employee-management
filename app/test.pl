@@ -3,11 +3,51 @@ use warnings;
 use File::FindLib 'lib';
 use lib '.';
 # package main;
-
+use Data::Dumper;
 use App::Validation::Users;
 # package MyApp::Person;
 my $users = App::Validation::Users->new();
- 
+
+#################################user api test################
+use App::Api::Users;
+
+my $u = App::Api::Users->new();
+
+my $data = {
+    entity_id => 1,
+    username => "smart_hacker",
+    is_admin  => 1,
+    gets_notifications => 1,
+    permissions => 1,
+    created_by => 1,
+    modified_by => '12334',
+    is_active => 1,
+};
+
+use JSON;
+
+print encode_json($data);
+
+
+# print Dumper $u->insert($data);
+
+#update
+$data->{is_admin} = 1;
+$data->{username} = "smart_hacker",
+
+print Dumper $u->update($data);
+
+# print Dumper $u->delete($data);
+
+#################JUNK###########################
+
+
+
+=pod
+
+
+
+
 my $data = {
     "entity_id"      => "111               ",
     "username"    => "sss",

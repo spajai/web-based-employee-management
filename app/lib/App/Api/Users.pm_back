@@ -1,0 +1,207 @@
+package App::Api::Users;
+
+use strict;
+use warnings;
+use File::FindLib 'lib';
+use SQL::Abstract;
+use App::Validation::Users;
+use App::Utils;
+#constructor
+use Data::Dumper;
+use Clone qw<clone>;
+
+
+
+# use Validation::Class;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sub new {
+    return bless ( { table => "users", _utils => App::Utils->new() }, shift );
+}
+
+sub insert {
+    my ($self,$data) = (@_);
+
+    my $result;
+
+    ($result->{result}, $result->{message}) =  $self->_validate_data($data);
+
+    #invalid request
+    return $result if (! $result->{result});
+
+    #check if user exists
+    ($result->{result}, $result->{message}) = $self->_user_exists($data);
+    return $result if ($result->{result} == -1);
+
+    if (!$result->{result}) {
+
+        my $sql = SQL::Abstract->new;
+        my($stmt, @bind) = $sql->insert($self->{table}, $data);
+        my $dbh = $self->{_utils}->{_db}; #database handle
+        my $sth = $dbh->prepare($stmt);
+
+        eval {
+            $sth->execute(@bind);
+            $result->{result} = 1;
+            $result->{message} = "User added successfully";
+        };
+
+        if($@) {
+            $result->{result} = 0;
+            $result->{message} = "Error occured while inserting user";
+            warn "$@";
+        }
+
+    }
+
+    return $result;
+}
+
+sub update {
+    my ($self, $data) = (@_);
+
+    my $result;
+
+    ($result->{result}, $result->{message}) = $self->_validate_data($data, 'update');
+    #invalid request
+    return $result if ($result->{result});
+
+   ($result->{result}, $result->{message}) = $self->_user_exists($data);
+
+    if ($result->{result} == -1 ) {
+        my $sql = SQL::Abstract->new;
+        #where clause we dont update username
+        my $where = { username => delete $data->{username}};
+        my($stmt, @bind) = $sql->update($self->{table}, $data, $where);
+        my $dbh = $self->{_utils}->{_db}; #database handle
+        my $sth = $dbh->prepare($stmt);
+
+        eval {
+            $sth->execute(@bind);
+            $result->{result} = 1;
+            $result->{message} = "User updated successfully";
+        };
+
+        if($@) {
+            $result->{result} = 0;
+            $result->{message} = "Error occured while updating user";
+            warn "$@";
+        }
+
+    }
+
+    return $result;
+
+}
+
+sub delete  {
+    my ($self,$data) = (@_);
+
+    my $result;
+
+    ($result->{result}, $result->{message}) =  $self->_validate_data($data);
+
+    #invalid request
+    return if ($result->{result});
+
+   ($result->{result}, $result->{message}) =  $self->_user_exists($data);
+
+    if ($result->{result} == 1 ) {
+        #go ahead and delete 
+        my $sql = SQL::Abstract->new;
+        my $where = undef;
+        my($stmt, @bind) = $sql->delete($self->{table}, $where);
+
+    }
+
+    $result;
+
+}
+
+
+sub _user_exists {
+    my ($self,$data) = @_;
+
+    #get db connection and check username
+
+    my $result;
+
+    my $sql = SQL::Abstract->new;
+
+    # select 1 from users where username = $data->{username};
+
+    my($stmt, @bind) = $sql->select($self->{table}, [1],{username => $data->{username}});
+    my $dbh = $self->{_utils}->{_db};
+    my $sth = $dbh->prepare($stmt);
+
+    my $res = $sth->execute(@bind);
+
+    if( $res eq '0E0' ) {
+        $result->{result} = 0;
+        $result->{message} = "user $data->{username} not exists";
+
+    } else {
+        $result->{result} = -1;
+        $result->{message} = "user $data->{username} already exists";
+    }
+
+    return ($result->{result},$result->{message});
+}
+
+
+sub _validate_data {
+    my ($self,$data, $action) = @_;
+
+    my $valid = 0;
+
+    my $message = "Invalid Request Required Parameters Missing";
+
+    return ($valid,$message) unless (keys %$data);
+# validate rules on the person object
+
+    # my $users_rules = $users->rules();
+    if (defined $action && $action eq 'update') {
+        # delete $users_rules->{created_by};
+        # delete $users_rules->{username};
+    }
+    print Dumper $data;
+
+    # manipulate the rule depending on $action
+    #$users->get_errors;
+ 
+    $valid = 1; #validation will set this flag off
+    $message = undef;
+
+    my $users = App::Validation::Users->new($data);
+    unless ($users->validates) {
+        $valid = 0;
+        $message = $users->errors_to_string;
+    }
+
+    # unless ($users->validate($users_rules => $cloned_data ,{ prune => 1 })) {
+    # unless ($users->validate($users_rules => $cloned_data)) {
+    # unless ($users->validate(keys  %$cloned_data)) {
+        # if ($users->error_count) {
+            # $valid = 0;
+            # $message = $users->errors_to_string;
+        # }
+    # }
+    # print Dumper $data,$message;
+    return ($valid,$message);
+}
+
+1;
