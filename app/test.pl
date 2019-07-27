@@ -6,16 +6,109 @@ use lib '.';
 use Data::Dumper;
 use App::Validation::Users;
 # package MyApp::Person;
-my $users = App::Validation::Users->new();
+
+
+
+
+#################################Contacts api test################
+use App::Api::Contacts;
+
+my $c = App::Api::Contacts->new();
+
+my $data = {
+    short_name => 'smart',
+    description => 'why we need',
+    person_id => 1,
+    address_list_id => 2,
+    note_id => 3,
+    is_active => 1
+};
+
+# use JSON;
+
+# print encode_json($data);
+
+
+print Dumper $c->create($data);
+
+print Dumper $c->get();
+#update
+$data->{is_active} = 0;
+# $data->{phone_id} = 222236;
+# $data->{email_address} = undef;
+
+print Dumper $c->update($data);
+
+print Dumper $c->delete($data);
+print Dumper $c->get();
+
+#################JUNK###########################
+
+
+
+
+
+
+
+
+
+
+=pod
+
+#################################persons api test################
+use App::Api::Persons;
+
+my $persons = App::Validation::Persons->new();
+my $p = App::Api::Persons->new();
+
+my $data = {
+     salutation => 'mr         s',
+     first_name => 'smart',
+     last_name => 'hacker',
+     middle_name => 'i know',
+     nick_name => 'smarty',
+     honorific => 'male',
+     email_address => 'don\'t@gmail.com',
+     phone_id  => 1,
+     sms_id => 1, 
+     note_id => 1,
+     managed_by => '1',
+     timezone => 'America/Chicago',
+     is_locked => 1,
+     is_active => 1,
+     created_by => 1,
+};
+
+# use JSON;
+
+# print encode_json($data);
+
+
+# print Dumper $p->create($data);
+
+print Dumper $p->get();
+#update
+# $data->{is_locked} = 0;
+# $data->{phone_id} = 222236;
+# $data->{email_address} = undef;
+
+# print Dumper $p->update($data);
+
+print Dumper $p->delete($data);
+print Dumper $p->get();
+
+
+=pod
 
 #################################user api test################
 use App::Api::Users;
 
+my $users = App::Validation::Users->new();
 my $u = App::Api::Users->new();
 
 my $data = {
-    entity_id => 1,
-    username => "smart_hacker",
+    entity_id => 2,
+    username => "smart_hacker_1",
     is_admin  => 1,
     gets_notifications => 1,
     permissions => 1,
@@ -24,18 +117,19 @@ my $data = {
     is_active => 1,
 };
 
-use JSON;
+# use JSON;
 
-print encode_json($data);
+# print encode_json($data);
 
 
-# print Dumper $u->insert($data);
+# print Dumper $u->create($data);
 
+print Dumper $u->get();
 #update
-$data->{is_admin} = 1;
-$data->{username} = "smart_hacker",
+# $data->{is_admin} = 1;
+# $data->{username} = "smart_hacker",
 
-print Dumper $u->update($data);
+# print Dumper $u->update($data);
 
 # print Dumper $u->delete($data);
 
@@ -111,3 +205,57 @@ my $spec = App::Validation::Users::profile();
 unless ($v->validate_document($spec => $data)) {
     warn $v->errors_to_string if $v->error_count;
 }
+
+
+
+++++++++++++++++++DS+++++++++++++
+$result = $dbh->selectall_hashref($sql,"id");
+
+$VAR1 = {
+          '18' => {
+                    'entity_id' => 2,
+                    'is_admin' => 1,
+                    'gets_notifications' => 1,
+                    'permissions' => 1,
+                    'is_active' => 1,
+                    'id' => 18,
+                    'username' => 'smart_hacker',
+                    'last_login' => '2019-07-27 09:41:38.228183'
+                  },
+          '16' => {
+                    'id' => 16,
+                    'username' => 'test_user@',
+                    'last_login' => '2019-07-25 19:39:28.177537',
+                    'gets_notifications' => 1,
+                    'is_admin' => 0,
+                    'entity_id' => 1,
+                    'is_active' => 1,
+                    'permissions' => 89
+                  }
+        };
+        
+        
+$result = $dbh->selectall_arrayref($sql);
+
+$VAR1 = [
+          [
+            16,
+            1,
+            'test_user@',
+            0,
+            1,
+            89,
+            '2019-07-25 19:39:28.177537',
+            1
+          ],
+          [
+            18,
+            2,
+            'smart_hacker',
+            1,
+            1,
+            1,
+            '2019-07-27 09:41:38.228183',
+            1
+          ]
+        ];

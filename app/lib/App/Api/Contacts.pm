@@ -1,10 +1,10 @@
-package App::Api::Persons;
+package App::Api::Contacts;
 
 use strict;
 use warnings;
 use File::FindLib 'lib';
 use SQL::Abstract;
-use App::Validation::Persons;
+use App::Validation::Contacts;
 use App::Utils;
 #constructor
 use Data::Dumper;
@@ -23,7 +23,7 @@ Desc   :
 =cut
 
 sub new {
-    return bless( { table => "persons", _utils => App::Utils->new() }, shift );
+    return bless( { table => "contacts", _utils => App::Utils->new() }, shift );
 }
 
 # ========================================================================== #
@@ -45,7 +45,6 @@ sub get {
     my $result;
     my $sql = $self->_get_query();
 
-    # $result = $dbh->selectall_hashref($sql,"id");
     $result = $dbh->selectall_arrayref( $sql );
 
     return $result;
@@ -74,37 +73,31 @@ sub create {
     return $result unless ( $result->{result} );
 
     #check if person exists
-    ( $result->{result}, $result->{message} ) = $self->_person_exists( $data );
+    ( $result->{result}, $result->{message} ) = $self->_contact_exists( $data );
     return $result if ( $result->{result} == -1 );
 
     if ( !$result->{result} ) {
         my $stmt = $self->_create_query();
         #Push the bind values dont change the position
+
         my @bind;
-        push (@bind, 'person'                             );     #entity_name
-        push (@bind, $data->{email_address}               );     #object_name
-        push (@bind, $data->{comments}       || ''        );     #comment
-        push (@bind, $data->{salutation}                  );
-        push (@bind, $data->{first_name}     || ''        );
-        push (@bind, $data->{last_name}                   );
-        push (@bind, $data->{middle_name}                 );
-        push (@bind, $data->{nick_name}                   );
-        push (@bind, $data->{honorific}                   );
-        push (@bind, $data->{email_address}               );
-        push (@bind, $data->{phone_id}                    );
-        push (@bind, $data->{sms_id}                      );
-        push (@bind, $data->{note_id}                     );
-        push (@bind, $data->{managed_by}                  );
-        push (@bind, $data->{timezone}                    );
-        push (@bind, $data->{is_locked}                   );
-        push (@bind, $data->{is_active}                   );
-        push (@bind, $data->{created_by}                  );
+        push (@bind, 
+            'contact'                           ,     #entity_name
+            'contact'                           ,     #entity_name #verify 
+            $data->{comments}        || ''      ,     #comment
+            $data->{short_name}                 ,
+            $data->{description}     || ''      ,
+            $data->{person_id}                  ,
+            $data->{address_list_id}            ,
+            $data->{note_id}                    ,
+            $data->{is_active}                  ,
+        );
 
         my $param = {
             action => 'creat',
             stmt   => $stmt,
             bind   => [@bind],
-            entity => 'Person'
+            entity => 'Contact'
         };
 
         $result = $self->{_utils}->send_to_db( $param );    #execute on db
@@ -137,20 +130,18 @@ sub update {
     #invalid request
     return $result unless ( $result->{result} );
 
-    ( $result->{result}, $result->{message} ) = $self->_person_exists( $data );
+    ( $result->{result}, $result->{message} ) = $self->_contact_exists( $data );
 
     if ( $result->{result} == -1 ) {
         my $sql = SQL::Abstract->new;
-
-        #where clause we dont update email_address
-        my $where = { email_address => delete $data->{email_address} };
-        my ( $stmt, @bind ) = $sql->update( $self->{table}, $data, $where );
+        my $where = $data;
+        my ( $stmt, @bind ) = $sql->update( $self->{table}, $data,$where);
 
         my $param = {
             action => 'updat',
             stmt   => $stmt,
             bind   => [@bind],
-            entity => 'Person'
+            entity => 'Contact'
         };
 
         $result = $self->{_utils}->send_to_db( $param );    #execute on db
@@ -178,14 +169,14 @@ sub delete {
     my $result;
 
     #validate only email_address
-    ( $result->{result}, $result->{message} ) = $self->_validate_data( $data, ['email_address'] );
+    ( $result->{result}, $result->{message} ) = $self->_validate_data( $data );
 
     #invalid request
     return $result unless ( $result->{result} );
 
     #go ahead and delete
     my $sql   = SQL::Abstract->new;
-    my $where = { email_address => $data->{email_address} };
+    my $where = $data;
 
     $data = { "is_active" => 0 };
     my ( $stmt, @bind ) = $sql->update( $self->{table}, $data, $where );
@@ -193,7 +184,7 @@ sub delete {
         action => 'delet',
         stmt   => $stmt,
         bind   => [@bind],
-        entity => 'Person'
+        entity => 'Contact'
     };
 
     $result = $self->{_utils}->send_to_db( $param );    #execute on db
@@ -214,7 +205,7 @@ Desc   :
 
 =cut
 
-sub _person_exists {
+sub _contact_exists {
     my ( $self, $data ) = @_;
 
     #get db connection and check person
@@ -223,15 +214,17 @@ sub _person_exists {
 
     my $sql = SQL::Abstract->new;
 
-    # select 1 from persons where email_address = $data->{email_address};
+    #to avoid duplciate since we dont have unique combination
 
-    my ( $stmt, @bind ) = $sql->select( $self->{table}, ['1'], { email_address => $data->{email_address} });
+    # select 1 from contacts where short_name = <value> and description =<value> and person_id = <value> and address_list_id = <value> and note_id = <value> and is_active = <value>;
+
+    my ( $stmt, @bind ) = $sql->select( $self->{table}, ['1'], $data);
 
     my $param = {
         action => 'select',
         stmt   => $stmt,
         bind   => [@bind],
-        entity => 'Person',
+        entity => 'Contact',
         output => 1,          #since we need output
     };
 
@@ -239,11 +232,11 @@ sub _person_exists {
 
     if ( $result->{output} eq '0E0' ) {
         $result->{result}  = 0;
-        $result->{message} = "Person with email $data->{email_address} not exists";
+        $result->{message} = "Contact not exists";
 
     } elsif ( $result->{output} == 1 ) {
         $result->{result}  = -1;
-        $result->{message} = "Person with email $data->{email_address} already exists";
+        $result->{message} = "Contact already exists";
     }
 
     return ( $result->{result}, $result->{message} );
@@ -274,18 +267,18 @@ sub _validate_data {
     $message = undef;
     my $data_copy = clone( $data );
 
-    my $persons = App::Validation::Persons->new( %$data_copy );
+    my $contacts = App::Validation::Contacts->new( %$data_copy );
     if ( defined $fields && ref $fields eq 'ARRAY' ) {
 
         #validated given fields only
-        unless ( $persons->validate( @$fields ) ) {
+        unless ( $contacts->validate( @$fields ) ) {
             $valid   = 0;
-            $message = $persons->errors_to_string;
+            $message = $contacts->errors_to_string;
         }
     } else {
-        unless ( $persons->validates( $persons->fields->keys ) ) {
+        unless ( $contacts->validates( $contacts->fields->keys ) ) {
             $valid   = 0;
-            $message = $persons->errors_to_string;
+            $message = $contacts->errors_to_string;
         }
     }
 
@@ -306,7 +299,7 @@ Desc   :
 
 sub _create_query {
 
-    my $binds_symbol = join (',' , ( ('?') x15 ));
+    my $binds_symbol = join (',' , ( ('?') x 6 ));
     my $sql =qq(
     with entity_object as (
             select
@@ -323,8 +316,8 @@ sub _create_query {
                 RETURNING
                     id
         ) INSERT into
-            persons
-                (entity_id, salutation, first_name, last_name, middle_name, nick_name, honorific, email_address, phone_id, sms_id, note_id, managed_by, timezone, is_locked, is_active, created_by)
+            contacts
+                (entity_id, short_name, description, person_id, address_list_id, note_id, is_active)
                 select (select id from entity_id) as entity_id, $binds_symbol;
     );
     return $sql;
@@ -346,9 +339,9 @@ sub _get_query {
 
     my $sql = q(
         select 
-            salutation, first_name, last_name, middle_name, nick_name, honorific, email_address, phone_id, sms_id, note_id, managed_by, timezone, is_locked, is_active, created_by
+            id, entity_id, short_name, description, person_id, address_list_id, note_id, is_active
         from 
-            persons;
+            contacts;
     );
 
     return $sql;

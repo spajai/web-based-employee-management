@@ -3,15 +3,15 @@ package App::Validation::Users;
 use Validation::Class;
 
 
-field entity_id => {
-    required => 1,
-    pattern  => qr/^[0-9]*$/,
-    messages => {
-        required => 'field %s is required',
-        pattern  => 'field %s should contain digit only',
-    },
-    filters => [qw/trim/],
-};
+# field entity_id => {
+    # required => 1,
+    # pattern  => qr/^[0-9]*$/,
+    # messages => {
+        # required => 'field %s is required',
+        # pattern  => 'field %s should contain digit only',
+    # },
+    # filters => [qw/trim/],
+# };
 
 
 

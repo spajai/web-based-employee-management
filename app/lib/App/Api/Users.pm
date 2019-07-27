@@ -6,63 +6,147 @@ use File::FindLib 'lib';
 use SQL::Abstract;
 use App::Validation::Users;
 use App::Utils;
+
 #constructor
 use Data::Dumper;
 use Clone qw<clone>;
 
+# ========================================================================== #
+
+=item B<new>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
+
 sub new {
-    return bless ( { table => "users", _utils => App::Utils->new() }, shift );
+    return bless( { table => "users", _utils => App::Utils->new() }, shift );
 }
 
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
+
+sub get {
+    my ( $self, $param ) = ( @_ );
+
+    my $dbh = $self->{_utils}->get_dbh();    #get dbh
+    my $result;
+    my $sql = $self->_get_query();
+
+    # $result = $dbh->selectall_hashref($sql,"id");
+    $result = $dbh->selectall_arrayref( $sql );
+
+    # my $sth = $dbh->prepare($sql);
+    # $sth->execute;
+    # while (my $row = $sth->fetchrow_hashref())
+    # {print Dumper $row;}
+
+    # $result = $dbh->selectall_hashref($sql,"username");
+
+    # print Dumper $result;
+
+    return $result;
+}
+
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
+
 sub create {
-    my ($self,$data) = (@_);
+    my ( $self, $data ) = ( @_ );
 
     my $result;
 
-    ($result->{result}, $result->{message}) =  $self->_validate_data($data);
+    ( $result->{result}, $result->{message} ) = $self->_validate_data( $data );
 
     #invalid request
-    return $result unless ($result->{result});
+    return $result unless ( $result->{result} );
 
     #check if user exists
-    ($result->{result}, $result->{message}) = $self->_user_exists($data);
-    return $result if ($result->{result} == -1);
+    ( $result->{result}, $result->{message} ) = $self->_user_exists( $data );
+    return $result if ( $result->{result} == -1 );
 
-    if (!$result->{result}) {
+    if ( !$result->{result} ) {
 
-        my $sql = SQL::Abstract->new;
-        my($stmt, @bind) = $sql->insert($self->{table}, $data);
+        # my $sql = SQL::Abstract->new;
+        # my($stmt, @bind) = $sql->insert($self->{table}, $data);
+        my $stmt               = $self->_create_query();
+        my $object_name        = 'user';
+        my $entity_name        = $data->{username};
+        my $comments           = $data->{comments} || '';
+        my $username           = $data->{username};
+        my $is_admin           = $data->{is_admin};
+        my $gets_notifications = $data->{gets_notifications};
+        my $permissions        = $data->{permissions};
+        my $is_active          = $data->{is_active};
+
+        my $bind = [ $object_name, $entity_name, $comments, $username, $is_admin, $gets_notifications, $permissions, $is_active ];
 
         my $param = {
-            action => 'create',
+            action => 'creat',
             stmt   => $stmt,
-            bind   => [@bind],
+            bind   => $bind,
             entity => 'User'
         };
 
-        $result = $self->{_utils}->send_to_db($param); #execute on db
+        $result = $self->{_utils}->send_to_db( $param );    #execute on db
 
     }
 
     return $result;
 }
 
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
+
 sub update {
-    my ($self, $data) = (@_);
+    my ( $self, $data ) = ( @_ );
 
     my $result;
 
-    ($result->{result}, $result->{message}) = $self->_validate_data($data);
+    ( $result->{result}, $result->{message} ) = $self->_validate_data( $data );
+
     #invalid request
-    return $result unless ($result->{result});
+    return $result unless ( $result->{result} );
 
-   ($result->{result}, $result->{message}) = $self->_user_exists($data);
+    ( $result->{result}, $result->{message} ) = $self->_user_exists( $data );
 
-    if ($result->{result} == -1 ) {
+    if ( $result->{result} == -1 ) {
         my $sql = SQL::Abstract->new;
+
         #where clause we dont update username
-        my $where = { username => delete $data->{username}};
-        my($stmt, @bind) = $sql->update($self->{table}, $data, $where);
+        my $where = { username => delete $data->{username} };
+        my ( $stmt, @bind ) = $sql->update( $self->{table}, $data, $where );
 
         my $param = {
             action => 'updat',
@@ -71,27 +155,43 @@ sub update {
             entity => 'User'
         };
 
-        $result = $self->{_utils}->send_to_db($param); #execute on db
+        $result = $self->{_utils}->send_to_db( $param );    #execute on db
     }
 
     return $result;
 
 }
 
-sub delete  {
-    my ($self,$data) = (@_);
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
+
+sub delete {
+    my ( $self, $data ) = ( @_ );
 
     my $result;
+
     #validate only user_name
-    ($result->{result}, $result->{message}) =  $self->_validate_data($data,['username']);
+    ( $result->{result}, $result->{message} ) = $self->_validate_data( $data, ['username'] );
 
     #invalid request
-    return $result unless ($result->{result});
+    return $result unless ( $result->{result} );
 
-    #go ahead and delete 
-    my $sql = SQL::Abstract->new;
-    my $where = {username => $data->{username}};
-    my($stmt, @bind) = $sql->delete($self->{table}, $where);
+    #go ahead and delete
+    my $sql   = SQL::Abstract->new;
+    my $where = { username => $data->{username} };
+
+    # my($stmt, @bind) = $sql->delete($self->{table}, $where);
+    $data = { "is_active" => 0 };
+    my ( $stmt, @bind ) = $sql->update( $self->{table}, $data, $where );
     my $param = {
         action => 'delet',
         stmt   => $stmt,
@@ -99,14 +199,26 @@ sub delete  {
         entity => 'User'
     };
 
-    $result = $self->{_utils}->send_to_db($param); #execute on db
+    $result = $self->{_utils}->send_to_db( $param );    #execute on db
 
     $result;
 
 }
 
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
+
 sub _user_exists {
-    my ($self,$data) = @_;
+    my ( $self, $data ) = @_;
 
     #get db connection and check username
 
@@ -116,59 +228,134 @@ sub _user_exists {
 
     # select 1 from users where username = $data->{username};
 
-    my($stmt, @bind) = $sql->select($self->{table}, ['1'],{username => $data->{username} });
+    my ( $stmt, @bind ) = $sql->select( $self->{table}, ['1'], { username => $data->{username} } );
 
     my $param = {
         action => 'select',
         stmt   => $stmt,
         bind   => [@bind],
         entity => 'User',
-        output => 1, #since we need output
+        output => 1,          #since we need output
     };
 
-    $result = $self->{_utils}->send_to_db($param); #execute on db
+    $result = $self->{_utils}->send_to_db( $param );    #execute on db
 
-    if( $result->{output} eq '0E0' ) {
-        $result->{result} = 0;
+    if ( $result->{output} eq '0E0' ) {
+        $result->{result}  = 0;
         $result->{message} = "user $data->{username} not exists";
 
-    } else {
-        $result->{result} = -1;
+    } elsif ( $result->{output} == 1 ) {
+        $result->{result}  = -1;
         $result->{message} = "user $data->{username} already exists";
     }
 
-    return ($result->{result},$result->{message});
+    return ( $result->{result}, $result->{message} );
 }
 
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
 
 sub _validate_data {
-    my ($self,$data ,$fields) = @_;
+    my ( $self, $data, $fields ) = @_;
 
     my $valid = 0;
 
     my $message = "Invalid Request Required Parameters Missing";
 
-    return ($valid,$message) unless (keys %$data);
+    return ( $valid, $message ) unless ( keys %$data );
 
-    $valid = 1; #validation will set this flag off
+    $valid   = 1;       #validation will set this flag off
     $message = undef;
-    my $data_copy = clone ($data);
+    my $data_copy = clone( $data );
 
-    my $users = App::Validation::Users->new(%$data_copy);
-    if (defined $fields && ref $fields eq 'ARRAY') {
+    my $users = App::Validation::Users->new( %$data_copy );
+    if ( defined $fields && ref $fields eq 'ARRAY' ) {
+
         #validated given fields only
-        unless ($users->validate(@$fields)){
-            $valid = 0;
+        unless ( $users->validate( @$fields ) ) {
+            $valid   = 0;
             $message = $users->errors_to_string;
         }
     } else {
-        unless ($users->validates($users->fields->keys)) {
-            $valid = 0;
+        unless ( $users->validates( $users->fields->keys ) ) {
+            $valid   = 0;
             $message = $users->errors_to_string;
         }
     }
 
-    return ($valid,$message);
+    return ( $valid, $message );
 }
 
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
+
+sub _create_query {
+
+    my $binds_symbol = join (',' , ( ('?') x 5 ));
+
+    my $sql = qq(
+        with entity_object as (
+            select
+                id
+            FROM
+                entity_objects
+            where
+                lower(object_name) = ?
+        ), entity_id as (
+                insert into
+                    entity
+                        (entity_object,entity_name,comments)
+                        select (select id from entity_object ) as entity_object, ?, ?
+                RETURNING
+                    id
+        ) INSERT into
+            users
+                (entity_id,username,is_admin,gets_notifications,permissions,is_active)
+                select (select id from entity_id) as entity_id,$binds_symbol;
+    );
+
+    return $sql;
+}
+
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
+
+sub _get_query {
+
+    my $sql = q(
+        select 
+            id,entity_id,username,is_admin,gets_notifications,permissions,last_login,is_active
+        from 
+            users;
+    );
+
+    return $sql;
+}
 1;

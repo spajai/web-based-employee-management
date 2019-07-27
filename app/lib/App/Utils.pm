@@ -49,7 +49,7 @@ sub send_to_db {
     my $dbh = $self->{_db}; #database handle
     my $sth = $dbh->prepare($stmt);
 
-    my $result {
+    my $result = {
         result  => 0,
         message => "Error occured while ${action}ing $entity",
     };
@@ -68,6 +68,36 @@ sub send_to_db {
 
     return $result;
 }
+
+sub get_dbh { return shift->{_db}; }
+
+sub selectrow_hashref {
+    my ($self, $param) = (@_);
+
+    my $action = $param->{action};
+    my $stmt   = $param->{stmt};
+    my $entity = $param->{entity};
+
+    my $dbh = $self->{_db}; #database handle
+
+    my $result;
+
+    eval {
+        $result = $dbh->selectrow_hashref($stmt);
+    };
+
+    #todo add logger
+    if($@) {
+        warn "$@";
+    }
+
+    return $result;
+
+}
+
+
+
+
 
 
 sub get_users {

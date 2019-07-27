@@ -25,7 +25,7 @@ mixin bool => {
 
 mixin name_field => {
     required   => 1,
-    min_length => 5,
+    min_length => 3,
     max_length => 15,
     messages   => {
         required   => 'field %s is required',
@@ -36,19 +36,19 @@ mixin name_field => {
     filters => [qw/trim/],
 };
 
-field entity_id => { mixin => 'id' };
+# field entity_id => { mixin => 'id' }; #we will generate this
 
 #Todo discuss 5char max
 #prefix
-field salutation => { mixin => 'name_field', };
+field salutation  => { mixin => 'name_field', };
 
-field first_name => { mixin => 'name_field', };
+field first_name  => { mixin => 'name_field', };
 
-field last_name => { mixin => 'name_field', };
+field last_name   => { mixin => 'name_field', };
 
 field middle_name => { mixin => 'name_field', };
 
-field nick_name => { mixin => 'name_field', };
+field nick_name   => { mixin => 'name_field', };
 
 #degree
 
@@ -72,45 +72,20 @@ field email_address => {
 
 #create if not exist
 #update upsert
-field phone_id => {
-    mixin   => 'id',
-    filters => [qw/trim/]
-};
+field phone_id   => { mixin   => 'id'   };
 
-field sms_id => {
-    mixin   => 'id',
-    filters => [qw/trim/]
-};
+field sms_id     => { mixin   => 'id'   };
 
-field note_id => {
-    mixin   => 'id',
-    filters => [qw/trim/]
-};
+field note_id    => { mixin   => 'id'   };
 
-field managed_by => {
-    mixin   => 'id',
-    filters => [qw/trim/]
-};
+field managed_by => { mixin   => 'id'   };
 
-field is_locked => {
-    mixin   => 'bool',
-    filters => [qw/trim/]
-};
+field is_locked  => { mixin   => 'bool' };
 
-field is_active => {
-    mixin   => 'bool',
-    filters => [qw/trim/]
-};
+field is_active  => { mixin   => 'bool' };
 
-field created_by => {
-    mixin   => 'id',
-    filters => [qw/trim/]
-};
+field created_by => { mixin   => 'id'   };
 
-field modified_by => {
-    mixin   => 'id',
-    filters => [qw/trim/]
-};
 
 # CREATE TABLE public.persons (
 # entity_id int8 NULL,
