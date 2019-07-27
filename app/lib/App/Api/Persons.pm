@@ -1,17 +1,17 @@
-package App::Api::Users;
+package App::Api::Persons;
 
 use strict;
 use warnings;
 use File::FindLib 'lib';
 use SQL::Abstract;
-use App::Validation::Users;
+use App::Validation::Persons;
 use App::Utils;
 #constructor
 use Data::Dumper;
 use Clone qw<clone>;
 
 sub new {
-    return bless ( { table => "users", _utils => App::Utils->new() }, shift );
+    return bless ( { table => "persons", _utils => App::Utils->new() }, shift );
 }
 
 sub create {
@@ -24,7 +24,7 @@ sub create {
     #invalid request
     return $result unless ($result->{result});
 
-    #check if user exists
+    #check if Persons exists
     ($result->{result}, $result->{message}) = $self->_user_exists($data);
     return $result if ($result->{result} == -1);
 
@@ -37,7 +37,7 @@ sub create {
             action => 'create',
             stmt   => $stmt,
             bind   => [@bind],
-            entity => 'User'
+            entity => 'Person'
         };
 
         $result = $self->{_utils}->send_to_db($param); #execute on db
@@ -78,7 +78,7 @@ sub update {
 
 }
 
-sub delete  {
+sub delete {
     my ($self,$data) = (@_);
 
     my $result;

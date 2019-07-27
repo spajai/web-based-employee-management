@@ -2,6 +2,7 @@ package App::Validation::Users;
 
 use Validation::Class;
 
+
 field entity_id => {
     required => 1,
     pattern  => qr/^[0-9]*$/,
@@ -9,8 +10,10 @@ field entity_id => {
         required => 'field %s is required',
         pattern  => 'field %s should contain digit only',
     },
-    filters => [qw/trim/],    #trim spaces
+    filters => [qw/trim/],
 };
+
+
 
 #Rules for username
 field username => {
@@ -31,6 +34,9 @@ field username => {
     filters => [qw/trim/]
 };
 
+
+
+
 #Rules for is_admin
 field is_admin => {
     required => 1,
@@ -40,20 +46,23 @@ field is_admin => {
         required => 'field %s is required',
         pattern  => 'field %s should contain only boolen value',
     },
-    # filters => [qw/trim/]
+    filters => [qw/trim/]
 };
+
 
 #Rules for gets_notifications
 field gets_notifications => {
 
     # required => 1,
-    pattern  => qr/^[0|1|t|f|y|n]$/i,
+    pattern  => qr/^[0-1]$/,
+    mixin    => [':int'],
     messages => {
-        required => 'field %s is required',
+        # required => 'field %s is required',
         pattern  => 'field %s should contain only contains only boolen value',
     },
     filters => [qw/trim/]
 };
+
 
 #Rules for permissions
 field permissions => {
@@ -68,6 +77,10 @@ field permissions => {
 };
 
 #Rules for is_active
+
+#actually a deletion soft deletion
+# we don't support hard delete
+
 field is_active => {
     required => 1,
     between  => [ 0, 1 ],
@@ -79,23 +92,25 @@ field is_active => {
     filters => [qw/trim/]
 };
 
+
+
 #Rules for created_by
 field created_by => {
     required => 1,
     pattern  => qr/^[0-9]*$/i,
     messages => {
-
         required => 'field %s is required',
         pattern  => 'field %s should contain only contains only integer',
     },
     filters => [qw/trim/]
 };
 
+#at the time of update
 field modified_by => {
-    required => 1,
+    # required => 1,
     pattern  => qr/^[0-9]*$/i,
     messages => {
-        required => 'field %s is required',
+        # required => 'field %s is required',
         pattern => 'field %s should contain only contains only integer',
     },
     filters => [qw/trim/]

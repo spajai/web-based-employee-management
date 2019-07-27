@@ -21,18 +21,6 @@ sub new {
     );
 }
 
-sub validate_credential {
-    my $self = shift;
-    my $user = shift || undef;
-    my $pass = shift || undef;
-    my $db   = $self->{_db};
-
-    my ($user_db, $pass_db) = $db->selectrow_array("select user_id,pass from dashboard_admin where user_id = '$user'");
-    my $valid = Core->new->valid_pass($pass_db, $pass);
-    return ($user_db, $valid);
-
-}
-
 sub today {
     my $self   = shift;
     my $method = shift || 0;
@@ -51,16 +39,21 @@ sub to_db_timestamp {
 
 sub send_to_db {
     my ($self,$param) = (@_);
+
     my $action = $param->{action};
     my $stmt   = $param->{stmt};
     my $entity = $param->{entity};
     my $bind   = $param->{bind};
     my $output = $param->{output} // undef;
+
     my $dbh = $self->{_db}; #database handle
     my $sth = $dbh->prepare($stmt);
-    my $result;
-    $result->{result} = 0;
-    $result->{message} = "Error occured while ${action}ing $entity";
+
+    my $result {
+        result  => 0,
+        message => "Error occured while ${action}ing $entity",
+    };
+
     eval {
         my $res = $sth->execute(@$bind);
         $result->{output} = $res if (defined $output);
@@ -68,6 +61,7 @@ sub send_to_db {
         $result->{message} = "$entity ${action}ed successfully";
     };
 
+    #todo add logger
     if($@) {
         warn "$@";
     }

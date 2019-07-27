@@ -2,6 +2,25 @@ package App;
 use Dancer2;
 
 use App::Api::Users;
+
+post '/user' => sub {
+    my %body_parameters  = params('body');
+    return App::Api::Users->new->create(\%body_parameters || {});
+};
+
+put '/user' => sub {
+    my %body_parameters  = params('body');
+    return App::Api::Users->new->update(\%body_parameters || {});
+};
+
+del '/user' => sub {
+    my %body_parameters  = params('body');
+    return App::Api::Users->new->delete(\%body_parameters || {});
+};
+
+true;
+
+=pod
 # get '/api/v1/ticket/count' => sub {
     # header('Content-Type' => 'application/json');
     # return to_json $report->get_ticket_count(params->{dev} || undef);
@@ -28,14 +47,3 @@ use App::Api::Users;
     # return to_json { status => $dev->update_dev($data) };
 # };
 
-post '/user' => sub {
-    my %body_parameters  = params('body');
-    return App::Api::Users->new->insert(\%body_parameters || {});
-};
-
-put '/user' => sub {
-    my %body_parameters  = params('body');
-    return App::Api::Users->new->update(\%body_parameters || {});
-};
-
-true;
