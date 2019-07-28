@@ -251,6 +251,29 @@ sub _user_exists {
 
     return ( $result->{result}, $result->{message} );
 }
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
+sub js_validation_data {
+    my ( $self ) = @_;
+
+    my $users = App::Validation::Users->new();
+    my $js_profile = $users->plugin('javascript_objects')->render(
+        namespace => 'model',
+        fields    => [$users->fields->keys],
+        include   => [qw/required min_length max_length messages pattern/]
+    );
+
+    return $js_profile;
+}
 
 # ========================================================================== #
 

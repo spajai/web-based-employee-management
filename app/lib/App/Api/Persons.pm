@@ -201,6 +201,29 @@ sub delete {
     $result;
 
 }
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
+sub js_validation_data {
+    my ( $self ) = @_;
+
+    my $persons = App::Validation::Persons->new();
+    my $js_profile = $persons->plugin('javascript_objects')->render(
+        namespace => 'model',
+        fields    => [$persons->fields->keys],
+        include   => [qw/required min_length max_length messages pattern/]
+    );
+
+    return $js_profile;
+}
 
 # ========================================================================== #
 

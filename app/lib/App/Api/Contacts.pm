@@ -284,6 +284,29 @@ sub _validate_data {
 
     return ( $valid, $message );
 }
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
+sub js_validation_data {
+    my ( $self ) = @_;
+
+    my $contacts = App::Validation::Contacts->new();
+    my $js_profile = $contacts->plugin('javascript_objects')->render(
+        namespace => 'model',
+        fields    => [$contacts->fields->keys],
+        include   => [qw/required min_length max_length messages pattern/]
+    );
+
+    return $js_profile;
+}
 
 # ========================================================================== #
 

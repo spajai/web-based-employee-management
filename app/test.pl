@@ -28,19 +28,19 @@ my $data = {
 
 # print encode_json($data);
 
+print Dumper $c->js_validation_data();
+# print Dumper $c->create($data);
 
-print Dumper $c->create($data);
-
-print Dumper $c->get();
+# print Dumper $c->get();
 #update
-$data->{is_active} = 0;
+# $data->{is_active} = 0;
 # $data->{phone_id} = 222236;
 # $data->{email_address} = undef;
 
-print Dumper $c->update($data);
+# print Dumper $c->update($data);
 
-print Dumper $c->delete($data);
-print Dumper $c->get();
+# print Dumper $c->delete($data);
+# print Dumper $c->get();
 
 #################JUNK###########################
 
