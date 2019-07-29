@@ -20,9 +20,28 @@ charset: "UTF-8"
 
 
 template: "template_toolkit"
+# engines:
+    # template:
+        # template_toolkit:
+            # WRAPPER: layouts/main.tt
 
+# serializer: "JSON"
+serializer: Mutable
 
-serializer: "JSON"
+# engines:
+    # serializer:
+        # JSON:
+            # allow_blessed:   '1'
+            # canonical:       '1'
+            # convert_blessed: '1'
+            # allow_nonref:    '1'
+Mutable:
+        mapping:
+            'text/x-yaml'        : YAML
+            'text/html'          : YAML
+            'text/x-data-dumper' : Dumper
+            'text/x-json'        : JSON
+            'application/json'   : JSON
 
 # session engine
 #

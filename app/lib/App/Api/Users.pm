@@ -46,8 +46,8 @@ sub get {
     my $result;
     my $sql = $self->_get_query();
 
-    # $result = $dbh->selectall_hashref($sql,"id");
-    $result = $dbh->selectall_arrayref( $sql );
+    $result = $dbh->selectall_hashref($sql,"id");
+    # $result = $dbh->selectall_arrayref( $sql );
 
     # my $sth = $dbh->prepare($sql);
     # $sth->execute;
@@ -56,9 +56,7 @@ sub get {
 
     # $result = $dbh->selectall_hashref($sql,"username");
 
-    # print Dumper $result;
-
-    return $result;
+    return [values %$result];
 }
 
 # ========================================================================== #
@@ -200,8 +198,7 @@ sub delete {
     };
 
     $result = $self->{_utils}->send_to_db( $param );    #execute on db
-
-    $result;
+    return $result;
 
 }
 

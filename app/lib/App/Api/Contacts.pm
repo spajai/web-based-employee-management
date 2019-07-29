@@ -79,6 +79,8 @@ sub create {
     if ( !$result->{result} ) {
         my $stmt = $self->_create_query();
         #Push the bind values dont change the position
+#short_name distinct
+#insert into note as well get the id
 
         my @bind;
         push (@bind, 
@@ -216,7 +218,10 @@ sub _contact_exists {
 
     #to avoid duplciate since we dont have unique combination
 
-    # select 1 from contacts where short_name = <value> and description =<value> and person_id = <value> and address_list_id = <value> and note_id = <value> and is_active = <value>;
+    # select 1 from contacts where short_name = <value> 
+ 
+    #remove
+ #and description =<value> and person_id = <value> and address_list_id = <value> and note_id = <value> and is_active = <value>;
 
     my ( $stmt, @bind ) = $sql->select( $self->{table}, ['1'], $data);
 

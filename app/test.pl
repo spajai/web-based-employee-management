@@ -7,9 +7,53 @@ use Data::Dumper;
 use App::Validation::Users;
 # package MyApp::Person;
 
+#################################user api test################
+use App::Api::Users;
+
+my $users = App::Validation::Users->new();
+my $u = App::Api::Users->new();
+
+my $data = {
+    entity_id => 2,
+    username => "smart_hacker_1",
+    is_admin  => 1,
+    gets_notifications => 1,
+    permissions => 1,
+    created_by => 1,
+    modified_by => '12334',
+    is_active => 1,
+};
+
+# use JSON;
+
+# print encode_json($data);
+
+
+# print Dumper $u->create($data);
+
+print Dumper $u->get();
+
+#update
+# $data->{is_admin} = 1;
+# $data->{username} = "smart_hacker",
+
+# print Dumper $u->update($data);
+
+# print Dumper $u->delete($data);
+
+#################JUNK###########################
 
 
 
+
+
+
+
+
+
+
+
+=pod
 #################################Contacts api test################
 use App::Api::Contacts;
 
@@ -17,7 +61,7 @@ my $c = App::Api::Contacts->new();
 
 my $data = {
     short_name => 'smart',
-    description => 'why we need',
+    description => 'do we need',
     person_id => 1,
     address_list_id => 2,
     note_id => 3,
@@ -26,9 +70,9 @@ my $data = {
 
 # use JSON;
 
-# print encode_json($data);
+print encode_json($data);
 
-print Dumper $c->js_validation_data();
+# print Dumper $c->js_validation_data();
 # print Dumper $c->create($data);
 
 # print Dumper $c->get();

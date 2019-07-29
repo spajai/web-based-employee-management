@@ -77,6 +77,10 @@ sub create {
     ( $result->{result}, $result->{message} ) = $self->_person_exists( $data );
     return $result if ( $result->{result} == -1 );
 
+#TODO:-
+#concat #first middle last <email>
+#update note_id sms phone
+
     if ( !$result->{result} ) {
         my $stmt = $self->_create_query();
         #Push the bind values dont change the position
@@ -141,6 +145,8 @@ sub update {
 
     if ( $result->{result} == -1 ) {
         my $sql = SQL::Abstract->new;
+
+#no update fnam lastname and middle and email
 
         #where clause we dont update email_address
         my $where = { email_address => delete $data->{email_address} };
@@ -245,7 +251,7 @@ sub _person_exists {
     my $result;
 
     my $sql = SQL::Abstract->new;
-
+#todo fname lname and middle and email
     # select 1 from persons where email_address = $data->{email_address};
 
     my ( $stmt, @bind ) = $sql->select( $self->{table}, ['1'], { email_address => $data->{email_address} });

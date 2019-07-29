@@ -91,15 +91,15 @@ sub create {
 
         my $stmt               = $self->_create_query();
         my $object_name        = 'organization';
-
+#   note id 
         my @bind;
         push (@bind, 
             'organization'                                  ,     #object_name
             $data->{organization_name}                      ,     #entity_name
             $data->{comments}                    || ''      ,
-            $data->{organization_type_id}        || ''      ,
-            $data->{organization_contact_id}     || ''      ,
-            $data->{organization_address_id}     || ''      ,
+            $data->{organization_type_id}        || undef   ,
+            $data->{organization_contact_id}     || undef   ,
+            $data->{organization_address_id}     || undef   ,
             $data->{note_id}                     || ''      ,
             $data->{is_active}                              ,
         );
