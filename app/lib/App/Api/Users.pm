@@ -43,20 +43,17 @@ sub get {
     my ( $self, $param ) = ( @_ );
 
     my $dbh = $self->{_utils}->get_dbh();    #get dbh
-    my $result;
+
     my $sql = $self->_get_query();
 
-    $result = $dbh->selectall_hashref($sql,"id");
-    # $result = $dbh->selectall_arrayref( $sql );
+    my $result = $dbh->selectrow_hashref($sql);
+    # while (my $row = $sth->fetchrow_hashref) {
+    # print Dumper $row;
+        # push (@{$result->{data}}, $row);
+    # }
+    $result->{validation_profile} = $self->js_validation_data();
 
-    # my $sth = $dbh->prepare($sql);
-    # $sth->execute;
-    # while (my $row = $sth->fetchrow_hashref())
-    # {print Dumper $row;}
-
-    # $result = $dbh->selectall_hashref($sql,"username");
-
-    return [values %$result];
+    return $result;
 }
 
 # ========================================================================== #
@@ -88,23 +85,24 @@ sub create {
     if ( !$result->{result} ) {
 
         # my $sql = SQL::Abstract->new;
-        # my($stmt, @bind) = $sql->insert($self->{table}, $data);
+        # my($stmt, @bind)     = $sql->insert($self->{table}, $data);
         my $stmt               = $self->_create_query();
-        my $object_name        = 'user';
-        my $entity_name        = $data->{username};
-        my $comments           = $data->{comments} || '';
-        my $username           = $data->{username};
-        my $is_admin           = $data->{is_admin};
-        my $gets_notifications = $data->{gets_notifications};
-        my $permissions        = $data->{permissions};
-        my $is_active          = $data->{is_active};
-
-        my $bind = [ $object_name, $entity_name, $comments, $username, $is_admin, $gets_notifications, $permissions, $is_active ];
+        my @bind;
+        push (@bind,
+                'user'                          ,
+                $data->{username}               ,#entity_name
+                $data->{comments} || ''         ,
+                $data->{username}               ,
+                $data->{is_admin}               ,
+                $data->{gets_notifications}     ,
+                $data->{permissions}            ,
+                $data->{is_active}              ,
+        );
 
         my $param = {
             action => 'creat',
             stmt   => $stmt,
-            bind   => $bind,
+            bind   => [@bind],
             entity => 'User'
         };
 
@@ -143,7 +141,7 @@ sub update {
         my $sql = SQL::Abstract->new;
 
         #where clause we dont update username
-        my $where = { username => delete $data->{username} };
+        my $where = { username => delete $data->{username}, id => delete $data->{id} };
         my ( $stmt, @bind ) = $sql->update( $self->{table}, $data, $where );
 
         my $param = {
@@ -185,7 +183,7 @@ sub delete {
 
     #go ahead and delete
     my $sql   = SQL::Abstract->new;
-    my $where = { username => $data->{username} };
+    my $where = { username => $data->{username}, id => $data->{id} };
 
     # my($stmt, @bind) = $sql->delete($self->{table}, $where);
     $data = { "is_active" => 0 };
@@ -266,7 +264,7 @@ sub js_validation_data {
     my $js_profile = $users->plugin('javascript_objects')->render(
         namespace => 'model',
         fields    => [$users->fields->keys],
-        include   => [qw/required min_length max_length messages pattern/]
+        include   => [qw/required min_length max_length messages/]
     );
 
     return $js_profile;
@@ -295,9 +293,9 @@ sub _validate_data {
 
     $valid   = 1;       #validation will set this flag off
     $message = undef;
-    my $data_copy = clone( $data );
-
-    my $users = App::Validation::Users->new( %$data_copy );
+    my %data_copy = %$data;
+print Dumper \%data_copy;
+    my $users = App::Validation::Users->new( %data_copy );
     if ( defined $fields && ref $fields eq 'ARRAY' ) {
 
         #validated given fields only
@@ -370,10 +368,15 @@ Desc   :
 sub _get_query {
 
     my $sql = q(
-        select 
-            id,entity_id,username,is_admin,gets_notifications,permissions,last_login,is_active
-        from 
-            users;
+       select array_to_json(array_agg(row_to_json(user_data))) as data
+        from (
+            select 
+                id,entity_id,username,is_admin,gets_notifications,permissions,last_login,is_active
+            from 
+                users
+            order by 
+                id asc
+        ) user_data
     );
 
     return $sql;

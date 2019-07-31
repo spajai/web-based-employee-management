@@ -40,8 +40,8 @@ field username => {
 #Rules for is_admin
 field is_admin => {
     required => 1,
-    pattern  => qr/^[0-1]$/,
-    mixin    => [':int'],
+    # pattern  => qr/^[0-1]$/,
+    # mixin    => [':int'],
     messages => {
         required => 'field %s is required',
         pattern  => 'field %s should contain only boolen value',
@@ -54,8 +54,8 @@ field is_admin => {
 field gets_notifications => {
 
     # required => 1,
-    pattern  => qr/^[0-1]$/,
-    mixin    => [':int'],
+    # pattern  => qr/^[0-1]$/,
+    # mixin    => [':int'],
     messages => {
         # required => 'field %s is required',
         pattern  => 'field %s should contain only contains only boolen value',
@@ -68,7 +68,7 @@ field gets_notifications => {
 field permissions => {
 
     required => 1,
-    pattern  => qr/^[0-9]*$/i,
+    # pattern  => qr/^[0-9]*$/i,
     messages => {
         required => 'field %s is required',
         pattern  => 'field %s should contain only contains only integer',
@@ -83,37 +83,34 @@ field permissions => {
 
 field is_active => {
     required => 1,
-    between  => [ 0, 1 ],
+    # between  => [ 0, 1 ],
     messages => {
         required => 'field %s is required',
         pattern  => 'field %s should contain only contains only boolen value',
-        between =>  'field %s has min length 8 and max length 30'
+        # between =>  'field %s has min length 8 and max length 30'
     },
     filters => [qw/trim/]
 };
-
 
 
 #Rules for created_by
-field created_by => {
-    required => 1,
-    pattern  => qr/^[0-9]*$/i,
-    messages => {
-        required => 'field %s is required',
-        pattern  => 'field %s should contain only contains only integer',
-    },
-    filters => [qw/trim/]
-};
+# field created_by => {
+    # required => 1,
+    # pattern  => qr/^[0-9]*$/i,
+    # messages => {
+        # required => 'field %s is required',
+        # pattern  => 'field %s should contain only contains only integer',
+    # },
+    # filters => [qw/trim/]
+# };
 
 #at the time of update
-field modified_by => {
-    # required => 1,
-    pattern  => qr/^[0-9]*$/i,
-    messages => {
-        # required => 'field %s is required',
-        pattern => 'field %s should contain only contains only integer',
-    },
-    filters => [qw/trim/]
-};
+# field modified_by => {
+    # pattern  => qr/^[0-9]*$/i,
+    # messages => {
+        # pattern => 'field %s should contain only contains only integer',
+    # },
+    # filters => [qw/trim/]
+# };
 
 1;

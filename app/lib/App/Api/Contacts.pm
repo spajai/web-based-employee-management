@@ -369,7 +369,7 @@ sub _get_query {
         select 
             id, entity_id, short_name, description, person_id, address_list_id, note_id, is_active
         from 
-            contacts;
+            contacts where is_active is true;
     );
 
     return $sql;

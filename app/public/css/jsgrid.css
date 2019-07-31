@@ -1,10 +1,4 @@
-/*
- * jsGrid v1.5.3 (http://js-grid.com)
- * (c) 2016 Artem Tabalin
- * Licensed under MIT (https://github.com/tabalinas/jsgrid/blob/master/LICENSE)
- */
-
-.jsgrid {
+﻿.jsgrid {
     position: relative;
     overflow: hidden;
     font-size: 1em;
@@ -48,7 +42,7 @@
     padding: 0.5em 0.5em;
 }
 
-.jsgrid-сell,
+.jsgrid-cell,
 .jsgrid-header-cell {
     box-sizing: border-box;
 }

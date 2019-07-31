@@ -42,13 +42,13 @@ sub get {
     my ( $self, $param ) = ( @_ );
 
     my $dbh = $self->{_utils}->get_dbh();    #get dbh
-    my $result;
+
     my $sql = $self->_get_query();
 
-    # $result = $dbh->selectall_hashref($sql,"id");
-    $result = $dbh->selectall_arrayref( $sql );
+    my $result = $dbh->selectall_hashref($sql,"id");
 
-    return $result;
+    return [values %$result];
+
 }
 
 # ========================================================================== #
@@ -78,32 +78,33 @@ sub create {
     return $result if ( $result->{result} == -1 );
 
 #TODO:-
-#concat #first middle last <email>
 #update note_id sms phone
 
     if ( !$result->{result} ) {
         my $stmt = $self->_create_query();
         #Push the bind values dont change the position
         my @bind;
-        push (@bind, 'person'                             );     #entity_name
-        push (@bind, $data->{email_address}               );     #object_name
-        push (@bind, $data->{comments}       || ''        );     #comment
-        push (@bind, $data->{salutation}                  );
-        push (@bind, $data->{first_name}     || ''        );
-        push (@bind, $data->{last_name}                   );
-        push (@bind, $data->{middle_name}                 );
-        push (@bind, $data->{nick_name}                   );
-        push (@bind, $data->{honorific}                   );
-        push (@bind, $data->{email_address}               );
-        push (@bind, $data->{phone_id}                    );
-        push (@bind, $data->{sms_id}                      );
-        push (@bind, $data->{note_id}                     );
-        push (@bind, $data->{managed_by}                  );
-        push (@bind, $data->{timezone}                    );
-        push (@bind, $data->{is_locked}                   );
-        push (@bind, $data->{is_active}                   );
-        push (@bind, $data->{created_by}                  );
-
+        my $object_name = $data->{first_name}.$data->{middle_name}.$data->{last_name}."<$data->{email_address}>";
+        push (@bind,                              
+             'person'                             ,    #entity_name
+             $object_name                         ,    #object_name
+             $data->{comments}       || ''        ,    #comment
+             $data->{salutation}                  ,
+             $data->{first_name}     || ''        ,
+             $data->{last_name}                   ,
+             $data->{middle_name}                 ,
+             $data->{nick_name}                   ,
+             $data->{honorific}                   ,
+             $data->{email_address}               ,
+             $data->{phone_id}                    ,
+             $data->{sms_id}                      ,
+             $data->{note_id}                     ,
+             $data->{managed_by}                  ,
+             $data->{timezone}                    ,
+             $data->{is_locked}                   ,
+             $data->{is_active}                   ,
+             $data->{created_by}                  ,
+        );
         my $param = {
             action => 'creat',
             stmt   => $stmt,
@@ -146,10 +147,14 @@ sub update {
     if ( $result->{result} == -1 ) {
         my $sql = SQL::Abstract->new;
 
-#no update fnam lastname and middle and email
+        #where clause we dont update email_address last_name first_name middle_name
+        my $where = {
+            email_address  => delete $data->{email_address},
+            last_name      => delete $data->{last_name},
+            first_name     => delete $data->{first_name},
+            middle_name    => delete $data->{middle_name},
+        };
 
-        #where clause we dont update email_address
-        my $where = { email_address => delete $data->{email_address} };
         my ( $stmt, @bind ) = $sql->update( $self->{table}, $data, $where );
 
         my $param = {
@@ -191,8 +196,13 @@ sub delete {
 
     #go ahead and delete
     my $sql   = SQL::Abstract->new;
-    my $where = { email_address => $data->{email_address} };
-
+    my $where = {
+        id             => delete $data->{id},
+        email_address  => delete $data->{email_address},
+        last_name      => delete $data->{last_name},
+        first_name     => delete $data->{first_name},
+        middle_name    => delete $data->{middle_name},
+    };
     $data = { "is_active" => 0 };
     my ( $stmt, @bind ) = $sql->update( $self->{table}, $data, $where );
     my $param = {
@@ -251,10 +261,15 @@ sub _person_exists {
     my $result;
 
     my $sql = SQL::Abstract->new;
-#todo fname lname and middle and email
+    #todo fname lname and middle and email
     # select 1 from persons where email_address = $data->{email_address};
-
-    my ( $stmt, @bind ) = $sql->select( $self->{table}, ['1'], { email_address => $data->{email_address} });
+    my $where = {
+        email_address  => $data->{email_address},
+        last_name      => $data->{last_name},
+        first_name     => $data->{first_name},
+        middle_name    => $data->{middle_name},
+    };
+    my ( $stmt, @bind ) = $sql->select( $self->{table}, ['1'], $where);
 
     my $param = {
         action => 'select',
@@ -377,7 +392,7 @@ sub _get_query {
         select 
             salutation, first_name, last_name, middle_name, nick_name, honorific, email_address, phone_id, sms_id, note_id, managed_by, timezone, is_locked, is_active, created_by
         from 
-            persons;
+            persons where is_active is true;
     );
 
     return $sql;

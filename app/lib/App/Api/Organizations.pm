@@ -43,22 +43,12 @@ sub get {
     my ( $self, $param ) = ( @_ );
 
     my $dbh = $self->{_utils}->get_dbh();    #get dbh
-    my $result;
+
     my $sql = $self->_get_query();
 
-    # $result = $dbh->selectall_hashref($sql,"id");
-    $result = $dbh->selectall_arrayref( $sql );
+    my $result = $dbh->selectall_hashref($sql,"id");
 
-    # my $sth = $dbh->prepare($sql);
-    # $sth->execute;
-    # while (my $row = $sth->fetchrow_hashref())
-    # {print Dumper $row;}
-
-    # $result = $dbh->selectall_hashref($sql,"username");
-
-    # print Dumper $result;
-
-    return $result;
+    return [values %$result];
 }
 
 # ========================================================================== #
@@ -266,10 +256,10 @@ Desc   :
 sub js_validation_data {
     my ( $self ) = @_;
 
-    my $users = App::Validation::Users->new();
-    my $js_profile = $users->plugin('javascript_objects')->render(
+    my $organizations = App::Validation::Organizations->new();
+    my $js_profile = $organizations->plugin('javascript_objects')->render(
         namespace => 'model',
-        fields    => [$users->fields->keys],
+        fields    => [$organizations->fields->keys],
         include   => [qw/required min_length max_length messages pattern/]
     );
 
@@ -377,9 +367,10 @@ sub _get_query {
         select 
             id, entity_id, organization_name, organization_type_id, organization_contact_id, organization_address_id, note_id, is_active
         from 
-            organizations;
+            organizations where is_active is true;
     );
 
     return $sql;
 }
+
 1;

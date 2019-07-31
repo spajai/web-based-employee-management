@@ -1,0 +1,105 @@
+  
+<script>
+
+$(function() {
+ var db = [% users.data %];
+ 
+    $("#jsGrid").jsGrid({
+        height: "auto",
+        width: "100%",
+        editing: true,
+        autoload: true,
+        paging: true,
+        pageSize: 5,
+        sorting: true,
+        filtering: true,
+        sorter: "string",
+        deleteConfirm: function(item) {
+            return "The client \"" + item.Name + "\" will be removed. Are you sure?";
+        },
+        rowClick: function(args) {
+            showDetailsDialog("Edit", args.item);
+        },
+        data: db,
+        fields: [
+            { name: "username", type: "text", width: 150 },
+            {
+                name: "is_admin",
+                type: "select",
+                items: [
+                     { Name: "Yes", Id: 1 },
+                     { Name: "No", Id: 0 }
+                ],
+                valueField: "Id",
+                textField: "Name"
+            },
+            {
+                type: "control",
+                modeSwitchButton: false,
+                editButton: false,
+                headerTemplate: function() {
+                    return $("<button>").attr("type", "button").text("Add")
+                            .on("click", function () {
+                                showDetailsDialog("Add", {});
+                            });
+                }
+            }
+        ]
+    });
+ 
+    $("#detailsDialog").dialog({
+        autoOpen: false,
+        width: 400,
+        close: function() {
+            $("#detailsForm").validate().resetForm();
+            $("#detailsForm").find(".error").removeClass("error");
+        }
+    });
+ 
+    $("#detailsForm").validate({
+        rules: {
+            username: "required",
+            // age: { required: true, range: [18, 150] },
+            // address: { required: true, minlength: 10 },
+            // country: "required"
+        },
+        messages: {
+            username: "Please enter name",
+            // age: "Please enter valid age",
+            // address: "Please enter address (more than 10 chars)",
+            // country: "Please select country"
+        },
+        submitHandler: function() {
+            formSubmitHandler();
+        }
+    });
+ 
+    var formSubmitHandler = $.noop;
+ 
+    var showDetailsDialog = function(dialogType, client) {
+        console.log(dialogType, client);
+        $("#username").val(client.username);
+        // $("#age").val(client.Age);
+        // $("#address").val(client.Address);
+        // $("#country").val(client.Country);
+        // $("#married").prop("checked", client.Married);
+ 
+        // formSubmitHandler = function() {
+            // saveClient(client, dialogType === "Add");
+        // };
+ 
+        $("#detailsDialog").dialog("option", "title", dialogType + " Client").dialog("open");
+    };
+ 
+    var saveClient = function(client, isNew) {
+        $.extend(client, {
+            username: $("#username").val()
+        });
+ 
+        $("#jsGrid").jsGrid(isNew ? "insertItem" : "updateItem", client);
+ 
+        $("#detailsDialog").dialog("close");
+    };
+ 
+});
+</script>

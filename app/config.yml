@@ -26,7 +26,6 @@ template: "template_toolkit"
             # WRAPPER: layouts/main.tt
 
 # serializer: "JSON"
-serializer: Mutable
 
 # engines:
     # serializer:
@@ -35,6 +34,10 @@ serializer: Mutable
             # canonical:       '1'
             # convert_blessed: '1'
             # allow_nonref:    '1'
+            # boolean_values:   
+                # -0
+                # -1
+serializer: Mutable
 Mutable:
         mapping:
             'text/x-yaml'        : YAML

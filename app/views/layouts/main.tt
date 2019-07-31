@@ -10,6 +10,7 @@
 
   <title>Admin Control App by spajai</title>
 
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/start/jquery-ui.css">
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -20,6 +21,18 @@
 
   <link type="text/css" rel="stylesheet" href="css/jsgrid.min.css" />
   <link type="text/css" rel="stylesheet" href="css/jsgrid-theme.min.css" />
+
+
+ <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/start/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+
+
+
+    <link rel="stylesheet" type="text/css" href="css/demos.css" />
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+
 
 </head>
 
@@ -83,10 +96,24 @@
 
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   
   <!-- js grid -->
   <script type="text/javascript" src="js/jsgrid.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.min.js"></script>
+
+    
+    <script src="src/jsgrid.core.js"></script>
+    <script src="src/jsgrid.load-indicator.js"></script>
+    <script src="src/jsgrid.load-strategies.js"></script>
+    <script src="src/jsgrid.sort-strategies.js"></script>
+    <script src="src/jsgrid.field.js"></script>
+    <script src="src/fields/jsgrid.field.text.js"></script>
+    <script src="src/fields/jsgrid.field.number.js"></script>
+    <script src="src/fields/jsgrid.field.select.js"></script>
+    <script src="src/fields/jsgrid.field.checkbox.js"></script>
+    <script src="src/fields/jsgrid.field.control.js"></script>
 
   <!-- Menu Toggle Script -->
   <script>
@@ -98,9 +125,8 @@
 
     <!-- Custom Pages goes here mostly js logic -->
 
-    <script>
     [% content %]
-    </script>
+
 
 
 </body>
