@@ -31,7 +31,7 @@ my $data = {
 
 # print Dumper $u->create($data);
 
-print Dumper $u->get();
+print $u->get();
 # print Dumper $u->js_validation_data();
 
 #update

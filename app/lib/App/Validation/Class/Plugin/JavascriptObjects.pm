@@ -72,8 +72,13 @@ sub render {
     # generate the JS object
     my @data = each(%{$root});
     my $prof = $self->format_rules($data[1]);
-    my $data = JSON->new->allow_nonref->allow_blessed->convert_blessed->utf8->pretty->encode($prof);
-    return $data;
+    my $js_validation_data;
+    # my $data = JSON->new->allow_nonref->allow_blessed->convert_blessed->utf8->pretty->encode($prof);
+     $js_validation_data->{rules}    = JSON->new->allow_nonref->allow_blessed->convert_blessed->utf8->pretty->encode($prof->{rules});
+    $js_validation_data->{messages} = JSON->new->allow_nonref->allow_blessed->convert_blessed->utf8->pretty->encode($prof->{messages});
+
+
+    return $js_validation_data;
 }
 
 sub format_rules
@@ -137,6 +142,7 @@ sub format_rules
         }
     }
     $rules_profile->{'messages'} = $messages if ($messages);
+
     return $rules_profile;
 }
 

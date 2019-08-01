@@ -6,7 +6,7 @@ use File::FindLib 'lib';
 use SQL::Abstract;
 use App::Validation::Users;
 use App::Utils;
-
+use JSON;
 #constructor
 use Data::Dumper;
 use Clone qw<clone>;
@@ -52,7 +52,8 @@ sub get {
         # push (@{$result->{data}}, $row);
     # }
     $result->{validation_profile} = $self->js_validation_data();
-
+    #"rules" : $result->{validation_profile}->{rules}
+    #"message" : $result->{validation_profile}->{message}
     return $result;
 }
 
@@ -259,15 +260,14 @@ Desc   :
 =cut
 sub js_validation_data {
     my ( $self ) = @_;
-
+    my $js_validation_data;
     my $users = App::Validation::Users->new();
     my $js_profile = $users->plugin('javascript_objects')->render(
         namespace => 'model',
         fields    => [$users->fields->keys],
         include   => [qw/required min_length max_length messages/]
     );
-
-    return $js_profile;
+      return $js_profile;
 }
 
 # ========================================================================== #
@@ -293,9 +293,11 @@ sub _validate_data {
 
     $valid   = 1;       #validation will set this flag off
     $message = undef;
-    my %data_copy = %$data;
-print Dumper \%data_copy;
+    my %data_copy = %{clone ($data) };
     my $users = App::Validation::Users->new( %data_copy );
+    
+    print Dumper $data,\%data_copy;
+    
     if ( defined $fields && ref $fields eq 'ARRAY' ) {
 
         #validated given fields only

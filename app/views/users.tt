@@ -86,10 +86,15 @@
         </form>
     </div>
 <script>
+
+
+
+
+
 (function() {
 
     var db = {
-
+        // insert_url: undef;
         loadData: function(filter) {
             return $.grep(this.clients, function(client) {
                 
@@ -103,11 +108,29 @@
 
         insertItem: function(insertingClient) {
             console.log(insertingClient);
+//add on sucees push
             this.clients.push(insertingClient);
+             $.ajax({
+                type: "POST",
+                url: "/api/v1/user",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(insertingClient),
+                dataType: "JSON"
+            });
+            
+            
         },
 
         updateItem: function(updatingClient) { 
-        
+                    console.log(updatingClient);
+//add to common 
+         $.ajax({
+                type: "PUT",
+                url: "/api/v1/user",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(updatingClient),
+                dataType: "JSON"
+            });
         
         
         },
@@ -115,19 +138,35 @@
         deleteItem: function(deletingClient) {
             var clientIndex = $.inArray(deletingClient, this.clients);
             this.clients.splice(clientIndex, 1);
+//reload page
              var param = {
-             "username": deletingClient.username,
-             "id": deletingClient.id
-         };
-            console.log(param);
+                "username": deletingClient.username,
+                "id": deletingClient.id
+            };
              $.ajax({
                 type: "DELETE",
                 url: "/api/v1/user",
                 contentType: "application/json; charset=utf-8",
-                // data: JSON.stringify(deletingClient),
-                data: deletingClient,
-                // data: JSON.stringify(param),
-                // dataType: "JSON"
+                data: JSON.stringify(param),
+
+                 error : function(xhr, textStatus, errorThrown) {
+                noty({text: errorThrown, type: "error", layout: "topRight"});            },
+                success:function(response){
+                if(response){
+                    var map = {
+                        "1": "success",
+                        "-1": "warning",
+                        "0": "error"
+                    };
+                    
+                    //deprecate noty
+                    noty({text: response.message, type: map[response.result], layout: "topRight"});
+                   }
+            }
+            // complete: function() {
+
+            // }
+                
             });
             
             
@@ -140,8 +179,8 @@
 
     db.yesno = [
         { Name: "", Id: undefined },
-        { Name: "No", Id: "False" },
-        { Name: "Yes", Id: "True" },
+        { Name: "No", Id: false },
+        { Name: "Yes", Id: true },
     ];
 
 
@@ -188,6 +227,7 @@ $(function() {
             
         },
         controller: db,
+        //dynamic
         fields: [
             { name: "username", type: "text", width: 150, title:"User Name" },
             { name: "is_admin", type: "select", items: db.yesno,title:"Is Admin", valueField: "Id", textField: "Name" },
@@ -236,13 +276,13 @@ if(item.is_active==1) {
         }
     });
  
-    $("#detailsForm").validate(
-        [% result_set.validation_profile %],
-       
-    );
-  // submitHandler: function() {
-            // formSubmitHandler();
-        // }
+    $("#detailsForm").validate({
+       "rules": [% result_set.validation_profile.rules %],
+       "messages": [% result_set.validation_profile.messages %],
+    submitHandler: function() {
+            formSubmitHandler();
+        }
+    });
     var formSubmitHandler = $.noop;
  
     var showDetailsDialog = function(dialogType, client) {
@@ -273,4 +313,50 @@ if(item.is_active==1) {
     };
  
 });
+
+
+
+
+
+
+
+
+
+
+// $.noty.defaults = {
+  // layout: 'top',
+  // theme: 'defaultTheme', // or relax
+  // type: 'alert', // success, error, warning, information, notification
+  // text: '', // [string|html] can be HTML or STRING
+
+  // dismissQueue: true, // [boolean] If you want to use queue feature set this true
+  // force: false, // [boolean] adds notification to the beginning of queue when set to true
+  // maxVisible: 5, // [integer] you can set max visible notification count for dismissQueue true option,
+
+  // template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
+
+  // timeout: false, // [integer|boolean] delay for closing event in milliseconds. Set false for sticky notifications
+  // progressBar: false, // [boolean] - displays a progress bar
+
+  // animation: {
+    // open: {height: 'toggle'}, // or Animate.css class names like: 'animated bounceInLeft'
+    // close: {height: 'toggle'}, // or Animate.css class names like: 'animated bounceOutLeft'
+    // easing: 'swing',
+    // speed: 500 // opening & closing animation speed
+  // },
+  // closeWith: ['click'], // ['click', 'button', 'hover', 'backdrop'] // backdrop click will close all // [boolean|array] an array of buttons, for creating confirmation dialogs.
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
 </script>

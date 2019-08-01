@@ -5,11 +5,11 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 
-BEGIN { $ENV{PERL_JSON_BACKEND} = 'JSON::XS' };
+# BEGIN { $ENV{PERL_JSON_BACKEND} = 'JSON::XS' };
  
-use JSON -support_by_pp;
-$JSON::true = 1;
-$JSON::false = 0;
+# use JSON -support_by_pp;
+# $JSON::true = 1;
+# $JSON::false = 0;
 
 # use this block if you don't need middleware, and only have a single target Dancer app to run here
 use App;

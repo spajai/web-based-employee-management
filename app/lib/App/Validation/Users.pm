@@ -35,8 +35,6 @@ field username => {
 };
 
 
-
-
 #Rules for is_admin
 field is_admin => {
     required => 1,
