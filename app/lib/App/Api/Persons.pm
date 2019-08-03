@@ -45,10 +45,11 @@ sub get {
 
     my $sql = $self->_get_query();
 
-    my $result = $dbh->selectall_hashref($sql,"id");
+    my $result = $dbh->selectrow_hashref($sql);
 
-    return [values %$result];
+    $result->{validation_profile} = $self->js_validation_data();
 
+    return $result;
 }
 
 # ========================================================================== #
@@ -231,14 +232,14 @@ Desc   :
 sub js_validation_data {
     my ( $self ) = @_;
 
-    my $persons = App::Validation::Persons->new();
-    my $js_profile = $persons->plugin('javascript_objects')->render(
+    my $js_validation_data;
+    my $users = App::Validation::Users->new();
+    my $js_profile = $users->plugin('javascript_objects')->render(
         namespace => 'model',
-        fields    => [$persons->fields->keys],
-        include   => [qw/required min_length max_length messages pattern/]
+        fields    => [$users->fields->keys],
+        include   => [qw/required min_length max_length messages/]
     );
-
-    return $js_profile;
+      return $js_profile;
 }
 
 # ========================================================================== #
@@ -387,12 +388,17 @@ Desc   :
 =cut
 
 sub _get_query {
-
+ 
     my $sql = q(
-        select 
-            salutation, first_name, last_name, middle_name, nick_name, honorific, email_address, phone_id, sms_id, note_id, managed_by, timezone, is_locked, is_active, created_by
-        from 
-            persons where is_active is true;
+        select array_to_json(array_agg(row_to_json(person_data))) as data
+                from (
+                    select
+                        salutation, first_name, last_name, middle_name, nick_name, honorific, email_address, phone_id, sms_id, note_id, managed_by, timezone, is_locked, is_active, created_by
+                    from
+                        persons
+                    order by
+                        id asc
+        ) person_data;
     );
 
     return $sql;

@@ -1,0 +1,398 @@
+ <h1>Data Manipulation</h1>
+    <div id="jsGrid"></div>
+    <div id="detailsDialog">
+
+    
+    
+        <form id="detailsForm">
+            <div class="details-form-field">
+                <label for="salutation">salutation</label>
+                <input id="salutation" name="salutation" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="first_name">first_name</label>
+                <input id="first_name" name="first_name" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="middle_name">middle_name</label>
+                <input id="middle_name" name="middle_name" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="last_name">last_name</label>
+                <input id="last_name" name="last_name" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="nick_name">nick_name</label>
+                <input id="nick_name" name="nick_name" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="honorific">honorific</label>
+                <input id="honorific" name="honorific" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="email_address">email_address</label>
+                <input id="email_address" name="email_address" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="phone">pone</label>
+                <input id="phone" name="phone" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="note_id">note</label>
+                <input id="note_id" name="note" type="textarea" />
+            </div>
+            <div class="details-form-field">
+                <label for="sms">sms</label>
+                <input id="sms" name="sms" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="is_active">is_active:</label>
+                <select id="is_active" name="is_active">
+                    <option value="">(Select)</option>
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
+                </select>
+            </div>
+            <div class="details-form-field">
+                <label for="gets_notifications">Get Notification:</label>
+                <select id="gets_notifications" name="gets_notifications">
+                    <option value="">(Select)</option>
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
+                </select>
+            </div>
+            <div class="details-form-field">
+                <label for="is_locked">is_locked:</label>
+                <select id="is_locked" name="is_locked">
+                    <option value="">(Select)</option>
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
+                </select>
+            </div>
+
+            <div class="details-form-field">
+                <button type="submit" id="save">Save</button>
+            </div>
+        </form>
+    </div>
+<script>
+
+
+
+
+
+(function() {
+     alertify.set('notifier','position', 'top-right');
+
+    var db = {
+        loadData: function(filter) {
+            return $.grep(this.clients, function(client) {
+                
+                return (!filter.username || !client.username || client.username.indexOf(filter.username) > -1)
+                    && (!filter.is_admin || client.is_admin == filter.is_admin)
+                    && (!filter.is_active || client.is_active == filter.is_active)
+                    && (!filter.permissions || client.permissions == filter.permissions)
+                    && (!filter.gets_notifications || client.gets_notifications == filter.gets_notifications);
+            });
+        },
+
+        insertItem: function(insertingClient) {
+            console.log(insertingClient);
+            //add on sucees push
+            this.clients.push(insertingClient);
+            //add on sucees push
+            //add on sucees push
+             var param = {};
+            for (const [ key, value ] of Object.entries(insertingClient)) {
+                console.log(key, value);
+
+                if (value === true) {
+                     param[key] = 1;
+                }else if (value === false) {
+                     param[key] = 0;
+                } else {
+                    param[key] = value;
+                
+                }
+            }
+             $.ajax({
+                type: "POST",
+                url: "/api/v1/user",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                dataType: "JSON",
+                error : function(xhr, textStatus, errorThrown) {
+                    alertify.error(errorThrown); 
+
+                    // noty({text: errorThrown, type: "error", layout: "topRight"});
+                },
+                success:function(response){
+                if(response){
+                    //deprecate noty
+                    // noty({text: response.message, type: map[response.result], layout: "topRight"});
+                     if(response.result == 1) {
+                        alertify.success(response.message); 
+                     }
+                     if(response.result == 0 ) {
+                        alertify.error(response.message); 
+                     }
+                     if(response.result == -1 ) {
+                        alertify.warning(response.message); 
+                     }
+                   }
+                }
+            });
+            
+            
+        },
+
+        updateItem: function(updatingClient) {
+            var param = {};
+            for (const [ key, value ] of Object.entries(updatingClient)) {
+                console.log(key, value);
+
+                if (value === true) {
+                     param[key] = 1;
+                }else if (value === false) {
+                     param[key] = 0;
+                } else {
+                    param[key] = value;
+                
+                }
+            }
+         $.ajax({
+                type: "PUT",
+                url: "/api/v1/user",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                dataType: "JSON",
+                
+                error : function(xhr, textStatus, errorThrown) {
+                    alertify.error(errorThrown); 
+
+                    // noty({text: errorThrown, type: "error", layout: "topRight"});
+                },
+                success:function(response){
+                if(response){
+                    //deprecate noty
+                    // noty({text: response.message, type: map[response.result], layout: "topRight"});
+                     if(response.result == 1) {
+                        alertify.success(response.message); 
+                     }
+                     if(response.result == 0 ) {
+                        alertify.error(response.message); 
+                     }
+                     if(response.result == -1 ) {
+                        alertify.warning(response.message); 
+                     }
+                   }
+                }
+                
+            });
+        },
+
+        deleteItem: function(deletingClient) {
+            var clientIndex = $.inArray(deletingClient, this.clients);
+            this.clients.splice(clientIndex, 1);
+            //reload page
+             var param = {
+                "username": deletingClient.username,
+                "id": deletingClient.id
+            };
+             $.ajax({
+                type: "DELETE",
+                url: "/api/v1/user",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+
+                error : function(xhr, textStatus, errorThrown) {
+                    noty({text: errorThrown, type: "error", layout: "topRight"});
+                },
+                success:function(response){
+                if(response){
+                    //deprecate noty
+                    // noty({text: response.message, type: map[response.result], layout: "topRight"});
+                     if(response.result == 1) {
+                        alertify.success(response.message); 
+                     }
+                     if(response.result == 0 ) {
+                        alertify.error(response.message); 
+                     }
+                     if(response.result == -1 ) {
+                        alertify.warning(response.message); 
+                     }
+
+                   }
+                }
+            });
+            
+            
+        }
+
+    };
+
+    window.db = db;
+
+
+    db.yesno = [
+        { Name: "", Id: undefined},
+        { Name: "No", Id: false },
+        { Name: "Yes", Id: true },
+    ];
+
+
+    db.clients = [% result_set.data %];
+
+}());
+
+
+$(function() {
+ 
+    $("#jsGrid").jsGrid({
+
+        autoload: true,
+        // height: "100%",
+        height: "auto",
+        // height: "100%",
+        width: "auto",
+        editing: true,
+        paging: true,
+        pageSize: 40,
+        sorting: true,
+        filtering: true,
+        sorter: "string",
+
+        confirmDeleting: false,
+
+
+        
+        rowClass: function(item, itemIndex) {
+            return item.is_active == 0 ? 'bg-red' : '';
+        },
+        
+        rowClick: function(args) {
+            if(args.item.is_active == 1){
+                console.log(args.item);
+                showDetailsDialog("Edit", args.item);
+            }
+            
+        },
+        controller: db,
+
+ //dynamic
+        fields: [
+            { name: "salutation", type: "text", width: 150, title:"User Name" },
+            { name: "first_name", type: "text", width: 150, title:"User Name" },
+            { name: "middle_name", type: "text", width: 150, title:"User Name" },
+            { name: "last_name", type: "text", width: 150, title:"User Name" },
+            { name: "nick_name", type: "text", width: 150, title:"User Name" },
+            { name: "honorific", type: "text", width: 150, title:"User Name" },
+            { name: "email_address", type: "text", width: 150, title:"User Name" },
+            { name: "phone", type: "text", width: 150, title:"User Name" },
+            { name: "sms", type: "text", width: 150, title:"User Name" },
+            { name: "note", type: "text", width: 150, title:"User Name" },
+            { name: "is_locked", type: "select", items: db.yesno,title:"Is Admin", valueField: "Id", textField: "Name" },
+            { name: "is_active", type: "select", items: db.yesno,title:"Is Admin", valueField: "Id", textField: "Name" },
+            { name: "gets_notifications", title:"Gets Notification",type: "select", items: db.yesno, valueField: "Id", textField: "Name" },
+            { name: "permissions", type: "select",title:"Permissions", items: db.yesno, valueField: "Id", textField: "Name" },
+            { name: "is_active",title:"Active", type: "select", items: db.yesno, valueField: "Id", textField: "Name"
+            },
+            
+            {
+                type: "control",
+                modeSwitchButton: false,
+                editButton: false,
+                itemTemplate: function(value, item) {
+                var $result = $([]);
+                if(item.is_active==1) {
+                    $result = $result.add(this._createDeleteButton(item));
+                }
+                    return $result;
+                },
+                headerTemplate: function() {
+                    return $("<button>").attr("type", "button").text("Add")
+                    .on("click", function () {
+                        showDetailsDialog("Add", {});
+                    });
+                }
+            },
+        ],
+        onItemDeleting: function (args) {
+            if (!args.item.deleteConfirmed) { // custom property for confirmation
+                args.cancel = true; // cancel deleting
+                alertify.confirm("The User \"" + args.item.email_address + "\" will be removed. Are you sure?",
+                  function(){
+                      args.item.deleteConfirmed = true;
+                      $("#jsGrid").jsGrid('deleteItem', args.item); //call deleting once more in callback
+              }).setHeader('<em> Confirm Delete </em>');
+            }
+        },
+    });
+ 
+    $("#detailsDialog").dialog({
+        autoOpen: false,
+        width: 400,
+        close: function() {
+            $("#detailsForm").validate().resetForm();
+            $("#detailsForm").find(".error").removeClass("error");
+        }
+    });
+ 
+    $("#detailsForm").validate({
+       "rules": [% result_set.validation_profile.rules -%],
+       "messages": [% result_set.validation_profile.messages -%],
+    submitHandler: function() {
+            formSubmitHandler();
+        }
+    });
+    var formSubmitHandler = $.noop;
+ 
+    var showDetailsDialog = function(dialogType, client) {
+     
+
+        $("#salutation").val(client.salutation);
+        $("#first_name").val(client.first_name);
+        $("#middle_name").val(client.middle_name);
+        $("#last_name").val(client.last_name);
+        $("#nick_name").val(client.nick_name);
+        $("#honorific").val(client.honorific);
+        $("#email_address").val(client.email_address);
+        $("#phone").val(client.phone);
+        $("#sms").val(client.sms);
+        $("#note").val(client.note);
+        $("#is_active").val(client.is_active);
+        $("#is_locked").val(client.is_locked);
+ 
+        formSubmitHandler = function() {
+            saveClient(client, dialogType === "Add");
+        };
+ 
+        $("#detailsDialog").dialog("option", "title", dialogType + " Client")
+                .dialog("open");
+    };
+ 
+    var saveClient = function(client, isNew) {
+        $.extend(client, {
+   
+            salutation: $("#salutation").val(),
+            first_name: $("#first_name").val(),
+            last_name: $("#last_name").val(),
+            middle_name: $("#middle_name").val(),
+            nick_name: $("#nick_name").val(),
+            honorific: $("#honorific").val(),
+            email_address: $("#email_address").val(),
+            phone: $("#phone").val(),
+            sms: $("#sms").val(),
+            note: $("#note").val(),
+            is_locked: $("#is_locked").val(),
+            is_active: $("#is_active").val()
+        });
+ 
+        $("#jsGrid").jsGrid(isNew ? "insertItem" : "updateItem", client);
+ 
+        $("#detailsDialog").dialog("close");
+    };
+ 
+});
+
+</script>

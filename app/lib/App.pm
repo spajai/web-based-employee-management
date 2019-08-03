@@ -4,6 +4,9 @@ use Dancer2;
 use Data::Dumper;
 
 use App::Api::Users;
+use App::Api::Persons;
+use App::Api::Contacts;
+use App::Api::Organizations;
 
 # set serializers => undef;
 
@@ -31,10 +34,10 @@ get '/view/organizations' => sub {
 };
 get '/view/persons' => sub {
 
-    my $data =  App::Api::Users->new->get();
+    my $data =  App::Api::Persons->new->get();
 # set content_type => 'text/html';
     # send_as html => template 'users.tt', { users => {data => encode_json($data) }};
-    send_as html => template 'users.tt', {result_set =>  $data};
+    send_as html => template 'persons.tt', {result_set =>  $data};
      # template 'users.tt', { users => {data => encode_json($data) }};
 
 };
