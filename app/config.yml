@@ -41,7 +41,7 @@ serializer: Mutable
 Mutable:
         mapping:
             'text/x-yaml'        : YAML
-            'text/html'          : YAML
+            # 'text/html'          : YAML
             'text/x-data-dumper' : Dumper
             'text/x-json'        : JSON
             'application/json'   : JSON

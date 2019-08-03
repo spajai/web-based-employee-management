@@ -10,12 +10,15 @@
 
   <title>Admin Control App by spajai</title>
 
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/start/jquery-ui.css">
+  <link rel="stylesheet" href="test_css/jquery-ui.min.css">
+  <link rel="stylesheet" href="test_css/jquery-ui.structure.min.css">
+  <link rel="stylesheet" href="test_css/jquery-ui.theme.min.css">
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- Custom styles for this template -->
   <link href="css/simple-sidebar.css" rel="stylesheet">
+  <link href="test_css/custom.css" rel="stylesheet">
 
  <!-- js grid  -->
 
@@ -23,10 +26,26 @@
   <link type="text/css" rel="stylesheet" href="css/jsgrid-theme.min.css" />
 
 
- <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/start/jquery-ui.css">
-    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
-    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+ <!-- <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/start/jquery-ui.css"> -->
+    <!-- <script src="http://code.jquery.com/jquery-1.10.2.js"></script> -->
+    <!-- <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script> -->
+    <!-- <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script> -->
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+<link href="node_modules/pnotify/dist/PNotifyBrightTheme.css" rel="stylesheet" type="text/css" />
+
+<!-- include the style -->
+<link rel="stylesheet" href="css/alertify.min.css" />
+<!-- include a theme -->
+<link rel="stylesheet" href="css/themes/default.min.css" />
+
+<script src="js/alertify.min.js"></script>
+
+
+
+
+
 
 
 
@@ -53,10 +72,10 @@
     <div class="bg-light border-right" id="sidebar-wrapper">
       <div class="sidebar-heading">Admin Panel </div>
       <div class="list-group list-group-flush">
-        <a href="#" class="list-group-item list-group-item-action bg-light">Users</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Persons</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Contacts</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Organizations</a>
+        <a href="/?view=users" class="list-group-item list-group-item-action bg-light">Users</a>
+        <a href="/?view=persons" class="list-group-item list-group-item-action bg-light">Persons</a>
+        <a href="/?view=contacts" class="list-group-item list-group-item-action bg-light">Contacts</a>
+        <a href="/?view=organizations" class="list-group-item list-group-item-action bg-light">Organizations</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -65,33 +84,11 @@
     <div id="page-content-wrapper">
 
       <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
+        <button class="btn btn-primary" id="menu-toggle">Hide Menu</button>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Dropdown
-              </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Something else here</a>
-              </div>
-            </li>
-          </ul>
-        </div>
       </nav>
 
       <!-- <div id = wrapper > -->
@@ -108,21 +105,18 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   
-  <!-- js grid -->
-  <script type="text/javascript" src="js/jsgrid.min.js"></script>
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.min.js"></script>
-
-    
-    <script src="src/jsgrid.core.js"></script>
-    <script src="src/jsgrid.load-indicator.js"></script>
-    <script src="src/jsgrid.load-strategies.js"></script>
-    <script src="src/jsgrid.sort-strategies.js"></script>
-    <script src="src/jsgrid.field.js"></script>
-    <script src="src/fields/jsgrid.field.text.js"></script>
-    <script src="src/fields/jsgrid.field.number.js"></script>
-    <script src="src/fields/jsgrid.field.select.js"></script>
-    <script src="src/fields/jsgrid.field.checkbox.js"></script>
-    <script src="src/fields/jsgrid.field.control.js"></script>
+  
+  <script type="text/javascript" src="node_modules/pnotify/dist/iife/PNotify.js"></script>
+<script type="text/javascript" src="node_modules/pnotify/dist/iife/PNotifyButtons.js"></script>
+<script type="text/javascript" src="node_modules/pnotify/dist/iife/PNotifyConfirm.js"></script>
+  
+  
+  
+  
+  <!-- js grid and all custom -->
+  <!-- <script type="text/javascript" src="js/jsgrid.min.js"></script> -->
+    <script type="text/javascript" src="test/jquery.validate.min.js"></script>
+    <script src="test/jsgrid.all.min.js"></script>
 
 
 <!-- Notificatipon js -->

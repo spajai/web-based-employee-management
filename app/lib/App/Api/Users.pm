@@ -6,7 +6,6 @@ use File::FindLib 'lib';
 use SQL::Abstract;
 use App::Validation::Users;
 use App::Utils;
-use JSON;
 #constructor
 use Data::Dumper;
 use Clone qw<clone>;
@@ -47,10 +46,6 @@ sub get {
     my $sql = $self->_get_query();
 
     my $result = $dbh->selectrow_hashref($sql);
-    # while (my $row = $sth->fetchrow_hashref) {
-    # print Dumper $row;
-        # push (@{$result->{data}}, $row);
-    # }
     $result->{validation_profile} = $self->js_validation_data();
     #"rules" : $result->{validation_profile}->{rules}
     #"message" : $result->{validation_profile}->{message}
