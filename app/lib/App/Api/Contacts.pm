@@ -42,10 +42,12 @@ sub get {
     my ( $self, $param ) = ( @_ );
 
     my $dbh = $self->{_utils}->get_dbh();    #get dbh
-    my $result;
+
     my $sql = $self->_get_query();
 
-    $result = $dbh->selectall_arrayref( $sql );
+    my $result = $dbh->selectrow_hashref($sql);
+
+    $result->{validation_profile} = $self->js_validation_data();
 
     return $result;
 }
@@ -366,10 +368,15 @@ Desc   :
 sub _get_query {
 
     my $sql = q(
-        select 
-            id, entity_id, short_name, description, person_id, address_list_id, note_id, is_active
-        from 
-            contacts where is_active is true;
+         select array_to_json(array_agg(row_to_json(contact_data))) as data
+        from (
+            select 
+                id, entity_id, short_name, description, person_id, address_list_id, note_id, is_active
+            from 
+                contacts
+            order by 
+                id asc
+        ) contact_data;
     );
 
     return $sql;

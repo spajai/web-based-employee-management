@@ -40,9 +40,6 @@
 <!-- include a theme -->
 <link rel="stylesheet" href="css/themes/default.min.css" />
 
-<script src="js/alertify.min.js"></script>
-
-
 
 
 
@@ -106,9 +103,15 @@
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   
   
-  <script type="text/javascript" src="node_modules/pnotify/dist/iife/PNotify.js"></script>
-<script type="text/javascript" src="node_modules/pnotify/dist/iife/PNotifyButtons.js"></script>
-<script type="text/javascript" src="node_modules/pnotify/dist/iife/PNotifyConfirm.js"></script>
+  <script src="js/alertify.min.js"></script>
+  <script src="test/common.js"></script>
+
+
+
+  
+  <!-- <script type="text/javascript" src="node_modules/pnotify/dist/iife/PNotify.js"></script> -->
+<!-- <script type="text/javascript" src="node_modules/pnotify/dist/iife/PNotifyButtons.js"></script> -->
+<!-- <script type="text/javascript" src="node_modules/pnotify/dist/iife/PNotifyConfirm.js"></script> -->
   
   
   
@@ -120,9 +123,9 @@
 
 
 <!-- Notificatipon js -->
-<script src="lib/noty.js" type="text/javascript"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.7/packaged/jquery.noty.packaged.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.4.0/animate.min.css">
+<!-- <script src="lib/noty.js" type="text/javascript"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.7/packaged/jquery.noty.packaged.min.js"></script> -->
+<!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.4.0/animate.min.css"> -->
 
 
 

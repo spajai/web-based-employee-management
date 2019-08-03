@@ -46,9 +46,13 @@ sub get {
 
     my $sql = $self->_get_query();
 
-    my $result = $dbh->selectall_hashref($sql,"id");
+    my $result = $dbh->selectrow_hashref($sql);
 
-    return [values %$result];
+    $result->{validation_profile} = $self->js_validation_data();
+
+    $result->{fields} = [ $self->_form_update_add_fields() ];
+
+    return $result;
 }
 
 # ========================================================================== #
@@ -74,7 +78,7 @@ sub create {
     return $result unless ( $result->{result} );
 
     #check if user exists
-    ( $result->{result}, $result->{message} ) = $self->_user_exists( $data );
+    ( $result->{result}, $result->{message} ) = $self->_organization_exists( $data );
     return $result if ( $result->{result} == -1 );
 
     if ( !$result->{result} ) {
@@ -130,7 +134,7 @@ sub update {
     #invalid request
     return $result unless ( $result->{result} );
 
-    ( $result->{result}, $result->{message} ) = $self->_user_exists( $data );
+    ( $result->{result}, $result->{message} ) = $self->_organization_exists( $data );
 
     if ( $result->{result} == -1 ) {
         my $sql = SQL::Abstract->new;
@@ -171,14 +175,14 @@ sub delete {
     my $result;
 
     #validate only user_name
-    ( $result->{result}, $result->{message} ) = $self->_validate_data( $data, ['username'] );
+    ( $result->{result}, $result->{message} ) = $self->_validate_data( $data, ['organization_name'] );
 
     #invalid request
     return $result unless ( $result->{result} );
 
     #go ahead and delete
     my $sql   = SQL::Abstract->new;
-    my $where = { username => $data->{username} };
+    my $where = { organization_name => $data->{organization_name} };
 
     # my($stmt, @bind) = $sql->delete($self->{table}, $where);
     $data = { "is_active" => 0 };
@@ -208,10 +212,10 @@ Desc   :
 
 =cut
 
-sub _user_exists {
+sub _organization_exists {
     my ( $self, $data ) = @_;
 
-    #get db connection and check username
+    #get db connection and check organization
 
     my $result;
 
@@ -364,13 +368,41 @@ Desc   :
 sub _get_query {
 
     my $sql = q(
-        select 
-            id, entity_id, organization_name, organization_type_id, organization_contact_id, organization_address_id, note_id, is_active
-        from 
-            organizations where is_active is true;
+        select array_to_json(array_agg(row_to_json(organizations_data))) as data
+            from (
+                select 
+                    id, entity_id, organization_name, organization_type_id, organization_contact_id, organization_address_id, note_id, is_active
+                 from 
+                    organizations
+                order by 
+                    id asc
+        ) organizations_data 
     );
 
     return $sql;
 }
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns:
+
+Desc   :
+
+=cut
+sub _form_update_add_fields {
+    return qw(
+                organization_name
+                organization_type_id
+                organization_contact_id
+                organization_address_id
+                note_id
+                is_active
+            );
+
+}
+
 
 1;

@@ -14,3 +14,4 @@ on "test" => sub {
 # File::FindLib;
 # SQL::Abstract
 # DateTime::Format::Flexible
+# Template::Plugin::JSON

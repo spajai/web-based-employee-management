@@ -233,10 +233,10 @@ sub js_validation_data {
     my ( $self ) = @_;
 
     my $js_validation_data;
-    my $users = App::Validation::Users->new();
-    my $js_profile = $users->plugin('javascript_objects')->render(
+    my $persons = App::Validation::Persons->new();
+    my $js_profile = $persons->plugin('javascript_objects')->render(
         namespace => 'model',
-        fields    => [$users->fields->keys],
+        fields    => [$persons->fields->keys],
         include   => [qw/required min_length max_length messages/]
     );
       return $js_profile;

@@ -1,0 +1,151 @@
+[% USE JSON ( pretty => 1 ) %];
+
+ <h1>Data Manipulation</h1>
+    <div id="jsGrid"></div>
+    <div id="detailsDialog">
+        <form id="detailsForm">
+            <div class="details-form-field">
+                <label for="organization_name">organization_name</label>
+                <input id="organization_name" name="organization_name" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="organization_type_id">organization_type_id</label>
+                <input id="organization_type_id" name="organization_type_id" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="organization_contact_id">organization_contact_id</label>
+                <input id="organization_contact_id" name="organization_contact_id" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="organization_address_id">organization_address_id</label>
+                <input id="organization_address_id" name="organization_address_id" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="note_id">note</label>
+                <input id="note_id" name="note" type="textarea" />
+            </div>
+            <div class="details-form-field">
+                <label for="is_active">is_active:</label>
+                <select id="is_active" name="is_active">
+                    <option value="">(Select)</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
+            <div class="details-form-field">
+                <button type="submit" id="save">Save</button>
+            </div>
+        </form>
+    </div>
+
+
+<script>
+(function() {
+    var db = {
+        loadData: function(filter) {
+            
+            console.log(filter);
+            return $.grep(this.clients, function(client) {
+                return (!filter.organization_name || !client.organization_name || client.organization_name.toUpperCase().indexOf(filter.organization_name.toUpperCase()) > -1)
+                    && (!filter.is_active || client.is_active.toString() === filter.is_active.toString())
+                    && (!filter.permissions || client.permissions == filter.permissions)
+                    && (!filter.gets_notifications || client.gets_notifications == filter.gets_notifications);
+            });
+        },
+
+        insertItem: function(insertingClient) {
+            var options = {
+                type: 'POST',
+                route: "/api/v1/organizations",
+                params: {
+                    organization_name:       insertingClient.organization_name,
+                    organization_type_id:    insertingClient.organization_type_id,
+                    organization_contact_id: insertingClient.organization_contact_id,
+                    organization_address_id: insertingClient.organization_address_id,
+                    note_id:                 insertingClient.note_id,
+                    is_active:               insertingClient.is_active
+                }
+            };
+
+            build_ajax_request(options);
+            
+        },
+
+        updateItem: function(updatingClient) {
+             var options = {
+                type: 'PUT',
+                route: "/api/v1/organizations",
+                params: {
+                    organization_name:       updatingClient.organization_name,
+                    organization_type_id:    updatingClient.organization_type_id,
+                    organization_contact_id: updatingClient.organization_contact_id,
+                    organization_address_id: updatingClient.organization_address_id,
+                    note_id:                 updatingClient.note_id,
+                    is_active:               updatingClient.is_active,
+                    id:                      updatingClient.id
+                }
+            };
+
+            build_ajax_request(options);
+        },
+
+        deleteItem: function(deletingClient) {
+            var clientIndex = $.inArray(deletingClient, this.clients);
+            this.clients.splice(clientIndex, 1);
+              var options = {
+                type: 'DELETE',
+                route: "/api/v1/organizations",
+                params: {
+                    organization_name:       deletingClient.organization_name,
+                    id:                      deletingClient.id
+                }
+            };
+
+            build_ajax_request(options);
+        }
+
+    };
+
+    window.db = db;
+    db.yesno = [
+        { Name: "", Id: undefined},
+        { Name: "No", Id: false },
+        { Name: "Yes", Id: true },
+    ];
+/*
+#########################################
+    Template Toolkit section
+########################################
+*/
+    db.clients = [% result_set.data %];
+
+}());
+
+$(function() {
+    var options = {
+        grid_name: 'jsGrid',
+        db: db,
+        fields: [
+            { name: "organization_name", type: "text", width: 150, title:"organization name" },
+            { name: "organization_type_id", type: "textarea", width: 150, title:"organization_type_id" },
+            { name: "organization_contact_id", type: "text", width: 150, title:"organization_contact_id" },
+            { name: "organization_address_id", type: "text", width: 150, title:"organization_address_id" },
+            { name: "is_active",title:"Active", type: "select", items: db.yesno, valueField: "Id", textField: "Name"
+            },
+        ],
+        delete_cnf_field: 'organization_name',
+        entity_name: 'Organization',
+/*
+#########################################
+    Template Toolkit section
+########################################
+*/
+        form_fields: [% result_set.fields.json -%],
+        validation_rules: [% result_set.validation_profile.rules -%],
+        validation_messages: [% result_set.validation_profile.messages -%]
+    };
+
+    load_jsgrid(options);
+});
+
+</script>

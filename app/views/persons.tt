@@ -271,8 +271,8 @@ $(function() {
         },
         
         rowClick: function(args) {
-            if(args.item.is_active == 1){
                 console.log(args.item);
+            if(args.item.is_active == 1){
                 showDetailsDialog("Edit", args.item);
             }
             
@@ -281,18 +281,17 @@ $(function() {
 
  //dynamic
         fields: [
-            { name: "salutation", type: "text", width: 150, title:"User Name" },
-            { name: "first_name", type: "text", width: 150, title:"User Name" },
-            { name: "middle_name", type: "text", width: 150, title:"User Name" },
-            { name: "last_name", type: "text", width: 150, title:"User Name" },
-            { name: "nick_name", type: "text", width: 150, title:"User Name" },
-            { name: "honorific", type: "text", width: 150, title:"User Name" },
-            { name: "email_address", type: "text", width: 150, title:"User Name" },
-            { name: "phone", type: "text", width: 150, title:"User Name" },
+            { name: "salutation", type: "text", width: 150, title:"saluation" },
+            { name: "first_name", type: "text", width: 150, title:"first Name" },
+            { name: "middle_name", type: "text", width: 150, title:"middle Name" },
+            { name: "last_name", type: "text", width: 150, title:"last Name" },
+            { name: "nick_name", type: "text", width: 150, title:"Nick Name" },
+            { name: "honorific", type: "text", width: 150, title:"honorific" },
+            { name: "email_address", type: "text", width: 150, title:"Phone" },
+            { name: "phone", type: "text", width: 150, title:"SMS" },
             { name: "sms", type: "text", width: 150, title:"User Name" },
-            { name: "note", type: "text", width: 150, title:"User Name" },
+            { name: "note", type: "text", width: 150, title:"Note" },
             { name: "is_locked", type: "select", items: db.yesno,title:"Is Admin", valueField: "Id", textField: "Name" },
-            { name: "is_active", type: "select", items: db.yesno,title:"Is Admin", valueField: "Id", textField: "Name" },
             { name: "gets_notifications", title:"Gets Notification",type: "select", items: db.yesno, valueField: "Id", textField: "Name" },
             { name: "permissions", type: "select",title:"Permissions", items: db.yesno, valueField: "Id", textField: "Name" },
             { name: "is_active",title:"Active", type: "select", items: db.yesno, valueField: "Id", textField: "Name"
@@ -348,7 +347,6 @@ $(function() {
     var formSubmitHandler = $.noop;
  
     var showDetailsDialog = function(dialogType, client) {
-     
 
         $("#salutation").val(client.salutation);
         $("#first_name").val(client.first_name);
@@ -367,13 +365,12 @@ $(function() {
             saveClient(client, dialogType === "Add");
         };
  
-        $("#detailsDialog").dialog("option", "title", dialogType + " Client")
-                .dialog("open");
+        console.log(client);
+        $("#detailsDialog").dialog("option", "title", dialogType + " User").dialog("open");
     };
  
     var saveClient = function(client, isNew) {
         $.extend(client, {
-   
             salutation: $("#salutation").val(),
             first_name: $("#first_name").val(),
             last_name: $("#last_name").val(),

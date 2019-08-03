@@ -1,33 +1,38 @@
  <h1>Data Manipulation</h1>
     <div id="jsGrid"></div>
     <div id="detailsDialog">
+
         <form id="detailsForm">
             <div class="details-form-field">
-                <label for="username">Username</label>
-                <input id="username" name="username" type="text" />
+                <label for="short_name">short_name</label>
+                <input id="short_name" name="short_name" type="text" />
             </div>
             <div class="details-form-field">
-                <label for="is_admin">Admin:</label>
-                <select id="is_admin" name="is_admin">
-                    <option value="">(Select)</option>
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>
-                </select>
+                <label for="address_list_id">address_list_id</label>
+                <input id="address_list_id" name="address_list_id" type="text" />
             </div>
             <div class="details-form-field">
-                <label for="gets_notifications">Get Notification:</label>
-                <select id="gets_notifications" name="gets_notifications">
-                    <option value="">(Select)</option>
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>
-                </select>
+                <label for="person_id">person_id</label>
+                <input id="person_id" name="person_id" type="text" />
             </div>
             <div class="details-form-field">
-                <label for="permissions">Permissions:</label>
-                <select id="permissions" name="permissions">
+                <label for="phone">pone</label>
+                <input id="phone" name="phone" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="note_id">note</label>
+                <input id="note_id" name="note" type="textarea" />
+            </div>
+            <div class="details-form-field">
+                <label for="description">description</label>
+                <input id="description" name="description" type="textarea" />
+            </div>
+            <div class="details-form-field">
+                <label for="is_active">is_active:</label>
+                <select id="is_active" name="is_active">
                     <option value="">(Select)</option>
-                    <option value="no">No</option>
-                    <option value="yes">Yes</option>
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
                 </select>
             </div>
 
@@ -78,7 +83,7 @@
             }
              $.ajax({
                 type: "POST",
-                url: "/api/v1/user",
+                url: "/api/v1/contact",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(param),
                 dataType: "JSON",
@@ -110,20 +115,20 @@
         updateItem: function(updatingClient) {
             var param = {};
             for (const [ key, value ] of Object.entries(updatingClient)) {
+                console.log(key, value);
 
-                // if (value === "yes") {
-                     // param[key] = "yes";
-                // }else if (value === "no") {
-                     // param[key] = "";
-                // } else {
+                if (value === true) {
+                     param[key] = 1;
+                }else if (value === false) {
+                     param[key] = 0;
+                } else {
                     param[key] = value;
                 
-                // }
+                }
             }
-                console.log(param);
          $.ajax({
                 type: "PUT",
-                url: "/api/v1/user",
+                url: "/api/v1/contact",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(param),
                 dataType: "JSON",
@@ -157,12 +162,12 @@
             this.clients.splice(clientIndex, 1);
             //reload page
              var param = {
-                "username": deletingClient.username,
+                "username": deletingClient.short_name,
                 "id": deletingClient.id
             };
              $.ajax({
                 type: "DELETE",
-                url: "/api/v1/user",
+                url: "/api/v1/contact",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(param),
 
@@ -212,14 +217,31 @@ $(function() {
     $("#jsGrid").jsGrid({
 
         autoload: true,
-        height: "100%",
+        // height: "100%",
+        height: "auto",
+        // height: "200%",
         width: "100%",
         editing: true,
         paging: true,
-        pageSize: 40,
+        pageSize: 10,
         sorting: true,
         filtering: true,
         sorter: "string",
+
+
+
+
+
+        pageButtonCount: 15,
+        noDataContent: "No Data",
+
+    deleteButtonTooltip: "Delete",                  // tooltip of delete item button
+    searchButtonTooltip: "Search",                  // tooltip of search button
+    clearFilterButtonTooltip: "Clear filter",       // tooltip of clear filter button
+
+
+
+
 
         confirmDeleting: false,
 
@@ -231,18 +253,25 @@ $(function() {
         
         rowClick: function(args) {
             if(args.item.is_active == 1){
-
+                console.log(args.item);
                 showDetailsDialog("Edit", args.item);
             }
-
+            
         },
         controller: db,
-        //dynamic
+
+ //dynamic
+    
+ 
         fields: [
-            { name: "username", type: "text", width: 150, title:"User Name" },
-            { name: "is_admin", type: "select", items: db.yesno,title:"Is Admin", valueField: "Id", textField: "Name" },
-            { name: "gets_notifications", title:"Gets Notification",type: "select", items: db.yesno, valueField: "Id", textField: "Name" },
-            { name: "permissions", type: "select",title:"Permissions", items: db.yesno, valueField: "Id", textField: "Name" },
+            { name: "short_name", type: "text", width: 150, title:"short name" },
+            { name: "description", type: "textarea", width: 150, title:"description" },
+            { name: "middle_name", type: "text", width: 150, title:"User Name" },
+            { name: "person_id", type: "text", width: 150, title:"person_id" },
+            { name: "address_list_id", type: "text", width: 150, title:"address_list_id" },
+            { name: "note_id", type: "text", width: 150, title:"note_id" },
+            { name: "email_address", type: "text", width: 150, title:"User Name" },
+            { name: "note", type: "text", width: 150, title:"User Name" },
             { name: "is_active",title:"Active", type: "select", items: db.yesno, valueField: "Id", textField: "Name"
             },
             
@@ -268,7 +297,7 @@ $(function() {
         onItemDeleting: function (args) {
             if (!args.item.deleteConfirmed) { // custom property for confirmation
                 args.cancel = true; // cancel deleting
-                alertify.confirm("The User \"" + args.item.username + "\" will be removed. Are you sure?",
+                alertify.confirm("The User \"" + args.item.email_address + "\" will be removed. Are you sure?",
                   function(){
                       args.item.deleteConfirmed = true;
                       $("#jsGrid").jsGrid('deleteItem', args.item); //call deleting once more in callback
@@ -296,33 +325,36 @@ $(function() {
     var formSubmitHandler = $.noop;
  
     var showDetailsDialog = function(dialogType, client) {
-        
-        console.log(client);
-        
-        $("#username").val(client.username);
-        $("#is_admin").val(client.is_admin.toString());
-        $("#gets_notifications").val(client.gets_notifications.toString());
-        $("#permissions").val(client.permissions);
+      
+        $("#short_name").val(client.short_name);
+        $("#description").val(client.description);
+        $("#middle_name").val(client.middle_name);
+        $("#person_id").val(client.person_id);
+        $("#address_list_id").val(client.address_list_id);
+        $("#note_id").val(client.note_id);
+        $("#email_address").val(client.email_address);
+        $("#note").val(client.note);
+        $("#is_active").val(client.is_active);
  
         formSubmitHandler = function() {
             saveClient(client, dialogType === "Add");
         };
  
-        $("#detailsDialog").dialog("option", "title", dialogType + " User").dialog("open");
-        
-        
-        
+        $("#detailsDialog").dialog("option", "title", dialogType + " Client")
+                .dialog("open");
     };
  
     var saveClient = function(client, isNew) {
         $.extend(client, {
-            username: $("#username").val(),
-            // is_admin: parseInt($("#is_admin").val(), 10),
-            is_admin: $("#is_admin").val(),
-            // permissions: parseInt($("#permissions").val(), 10),
-            permissions: $("#permissions").val(),
-            // gets_notifications: parseInt($("#gets_notifications").val(), 10),
-            gets_notifications: $("#gets_notifications").val(),
+            short_name: $("#short_name").val(),
+            description: $("#description").val(),
+            person_id: $("#person_id").val(),
+            middle_name: $("#middle_name").val(),
+            address_list_id: $("#address_list_id").val(),
+            honorific: $("#honorific").val(),
+            note_id: $("#note_id").val(),
+            is_locked: $("#is_locked").val(),
+            is_active: $("#is_active").val()
         });
  
         $("#jsGrid").jsGrid(isNew ? "insertItem" : "updateItem", client);

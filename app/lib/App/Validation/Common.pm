@@ -4,21 +4,21 @@ use Validation::Class;
 
 mixin id => {
     required => 1,
-    pattern  => qr/^[0-9]*$/,
+    # pattern  => qr/^[0-9]*$/,
     messages => {
         required => 'field %s is required',
-        pattern  => 'field %s should contain digit only',
+        # pattern  => 'field %s should contain digit only',
     },
     filters => [qw/trim/],
 };
 
 mixin bool => {
     required => 1,
-    pattern  => qr/^[0-1]$/,
+    # pattern  => qr/^[0-1]$/,
     mixin    => [':int'],
     messages => {
         required => 'field %s is required',
-        pattern  => 'field %s should contain only boolen value',
+        # pattern  => 'field %s should contain only boolen value',
     },
     filters => [qw/trim/]
 };
