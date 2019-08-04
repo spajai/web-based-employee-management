@@ -1,8 +1,10 @@
 function notification (response){
     if(response){
          if(response.result == 1) {
-            window.location.reload();
             alertify.success(response.message); 
+            window.location.reload();
+            // $("#grid").jsGrid("loadData");
+
          }
          if(response.result == 0 ) {
             alertify.error(response.message); 
@@ -20,7 +22,7 @@ alertify.set('notifier','position', 'top-right');
 function load_jsgrid(options) {
 
     var $grid = $('#' + options.grid_name);
-
+ 
     var control_field = {
         type: "control",
         modeSwitchButton: false,
@@ -147,7 +149,6 @@ function build_ajax_request (options) {
         success:function(response){
             notification(response);
             this.clients.push(insertingClient);
-            
         }
     });
     

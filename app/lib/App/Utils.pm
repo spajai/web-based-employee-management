@@ -56,6 +56,9 @@ sub send_to_db {
 
     eval {
         my $res = $sth->execute(@$bind);
+        use Data::Dumper;
+        print Dumper $stmt;
+        
         $result->{output} = $res if (defined $output);
         $result->{result} = 1;
         $result->{message} = "$entity ${action}ed successfully";
@@ -95,11 +98,6 @@ sub selectrow_hashref {
 
 }
 
-
-
-
-
-
 sub get_users {
     my $self = shift;
     my $type = shift || 'name';
@@ -111,6 +109,5 @@ sub get_users {
 
     # return wantarray ? @dev_list : \%dev_hash;
 }
-
 
 1;

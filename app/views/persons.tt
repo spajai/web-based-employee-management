@@ -1,9 +1,8 @@
+[% USE JSON ( pretty => 1 ) %];
+
  <h1>Data Manipulation</h1>
     <div id="jsGrid"></div>
     <div id="detailsDialog">
-
-    
-    
         <form id="detailsForm">
             <div class="details-form-field">
                 <label for="salutation">salutation</label>
@@ -49,27 +48,26 @@
                 <label for="is_active">is_active:</label>
                 <select id="is_active" name="is_active">
                     <option value="">(Select)</option>
-                    <option value="false">No</option>
-                    <option value="true">Yes</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
                 </select>
             </div>
             <div class="details-form-field">
                 <label for="gets_notifications">Get Notification:</label>
                 <select id="gets_notifications" name="gets_notifications">
                     <option value="">(Select)</option>
-                    <option value="false">No</option>
-                    <option value="true">Yes</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
                 </select>
             </div>
             <div class="details-form-field">
                 <label for="is_locked">is_locked:</label>
                 <select id="is_locked" name="is_locked">
                     <option value="">(Select)</option>
-                    <option value="false">No</option>
-                    <option value="true">Yes</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
                 </select>
             </div>
-
             <div class="details-form-field">
                 <button type="submit" id="save">Save</button>
             </div>
@@ -78,16 +76,10 @@
 <script>
 
 
-
-
-
 (function() {
-     alertify.set('notifier','position', 'top-right');
-
     var db = {
         loadData: function(filter) {
             return $.grep(this.clients, function(client) {
-                
                 return (!filter.username || !client.username || client.username.indexOf(filter.username) > -1)
                     && (!filter.is_admin || client.is_admin == filter.is_admin)
                     && (!filter.is_active || client.is_active == filter.is_active)
@@ -95,301 +87,123 @@
                     && (!filter.gets_notifications || client.gets_notifications == filter.gets_notifications);
             });
         },
-
         insertItem: function(insertingClient) {
-            console.log(insertingClient);
-            //add on sucees push
-            this.clients.push(insertingClient);
-            //add on sucees push
-            //add on sucees push
-             var param = {};
-            for (const [ key, value ] of Object.entries(insertingClient)) {
-                console.log(key, value);
-
-                if (value === true) {
-                     param[key] = 1;
-                }else if (value === false) {
-                     param[key] = 0;
-                } else {
-                    param[key] = value;
-                
+            var options = {
+                type: 'POST',
+                route: "/api/v1/person",
+                params : {
+                  salutation:      insertingClient.salutation,
+                  first_name:      insertingClient.first_name,
+                  last_name:       insertingClient.last_name,
+                  middle_name:     insertingClient.middle_name,
+                  nick_name:       insertingClient.nick_name,
+                  honorific:       insertingClient.honorific,
+                  email_address:   insertingClient.email_address,
+                  phone_id:        insertingClient.phone_id,
+                  sms_id:          insertingClient.sms_id,
+                  note_id:         insertingClient.note_id,
+                  managed_by:      insertingClient.managed_by,
+                  is_locked:       insertingClient.is_locked,
+                  is_active:       insertingClient.is_active,
+                  created_by: "2"
                 }
-            }
-             $.ajax({
-                type: "POST",
-                url: "/api/v1/user",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
-                dataType: "JSON",
-                error : function(xhr, textStatus, errorThrown) {
-                    alertify.error(errorThrown); 
+            };
 
-                    // noty({text: errorThrown, type: "error", layout: "topRight"});
-                },
-                success:function(response){
-                if(response){
-                    //deprecate noty
-                    // noty({text: response.message, type: map[response.result], layout: "topRight"});
-                     if(response.result == 1) {
-                        alertify.success(response.message); 
-                     }
-                     if(response.result == 0 ) {
-                        alertify.error(response.message); 
-                     }
-                     if(response.result == -1 ) {
-                        alertify.warning(response.message); 
-                     }
-                   }
-                }
-            });
-            
-            
+            build_ajax_request(options);
         },
 
-        updateItem: function(updatingClient) {
-            var param = {};
-            for (const [ key, value ] of Object.entries(updatingClient)) {
-                console.log(key, value);
-
-                if (value === true) {
-                     param[key] = 1;
-                }else if (value === false) {
-                     param[key] = 0;
-                } else {
-                    param[key] = value;
-                
+      updateItem: function(updatingClient) {
+            var options = {
+                type: 'PUT',
+                route: "/api/v1/person",
+               params : {   
+                  id:              updatingClient.id,
+                  salutation:      updatingClient.salutation,
+                  first_name:      updatingClient.first_name,
+                  last_name:       updatingClient.last_name,
+                  middle_name:     updatingClient.middle_name,
+                  nick_name:       updatingClient.nick_name,
+                  honorific:       updatingClient.honorific,
+                  email_address:   updatingClient.email_address,
+                  phone_id:        updatingClient.phone_id,
+                  sms_id:          updatingClient.sms_id,
+                  note_id:         updatingClient.note_id,
+                  managed_by:      updatingClient.managed_by,
+                  is_locked:       updatingClient.is_locked,
+                  is_active:       updatingClient.is_active,
                 }
-            }
-         $.ajax({
-                type: "PUT",
-                url: "/api/v1/user",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
-                dataType: "JSON",
-                
-                error : function(xhr, textStatus, errorThrown) {
-                    alertify.error(errorThrown); 
-
-                    // noty({text: errorThrown, type: "error", layout: "topRight"});
-                },
-                success:function(response){
-                if(response){
-                    //deprecate noty
-                    // noty({text: response.message, type: map[response.result], layout: "topRight"});
-                     if(response.result == 1) {
-                        alertify.success(response.message); 
-                     }
-                     if(response.result == 0 ) {
-                        alertify.error(response.message); 
-                     }
-                     if(response.result == -1 ) {
-                        alertify.warning(response.message); 
-                     }
-                   }
-                }
-                
-            });
+            };
+            build_ajax_request(options);
         },
-
         deleteItem: function(deletingClient) {
             var clientIndex = $.inArray(deletingClient, this.clients);
             this.clients.splice(clientIndex, 1);
-            //reload page
-             var param = {
-                "username": deletingClient.username,
-                "id": deletingClient.id
-            };
-             $.ajax({
-                type: "DELETE",
-                url: "/api/v1/user",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(param),
-
-                error : function(xhr, textStatus, errorThrown) {
-                    noty({text: errorThrown, type: "error", layout: "topRight"});
-                },
-                success:function(response){
-                if(response){
-                    //deprecate noty
-                    // noty({text: response.message, type: map[response.result], layout: "topRight"});
-                     if(response.result == 1) {
-                        alertify.success(response.message); 
-                     }
-                     if(response.result == 0 ) {
-                        alertify.error(response.message); 
-                     }
-                     if(response.result == -1 ) {
-                        alertify.warning(response.message); 
-                     }
-
-                   }
+            var options = {
+                type: 'DELETE',
+                route: "/api/v1/person",
+                params: {
+                  first_name:      deletingClient.first_name,
+                  last_name:       deletingClient.last_name,
+                  middle_name:     deletingClient.middle_name,
+                  email_address:   deletingClient.email_address,
+                  id:              deletingClient.id
                 }
-            });
-            
-            
+            };
+            build_ajax_request(options);
         }
-
     };
-
     window.db = db;
-
-
     db.yesno = [
         { Name: "", Id: undefined},
         { Name: "No", Id: false },
         { Name: "Yes", Id: true },
     ];
-
-
+/*
+#########################################
+    Template Toolkit section
+########################################
+*/
     db.clients = [% result_set.data %];
 
 }());
 
 
 $(function() {
- 
-    $("#jsGrid").jsGrid({
-
-        autoload: true,
-        // height: "100%",
-        height: "auto",
-        // height: "100%",
-        width: "auto",
-        editing: true,
-        paging: true,
-        pageSize: 40,
-        sorting: true,
-        filtering: true,
-        sorter: "string",
-
-        confirmDeleting: false,
-
-
-        
-        rowClass: function(item, itemIndex) {
-            return item.is_active == 0 ? 'bg-red' : '';
-        },
-        
-        rowClick: function(args) {
-                console.log(args.item);
-            if(args.item.is_active == 1){
-                showDetailsDialog("Edit", args.item);
-            }
-            
-        },
-        controller: db,
-
+    var options = {
+        grid_name: 'jsGrid',
+        db: db,
  //dynamic
         fields: [
-            { name: "salutation", type: "text", width: 150, title:"saluation" },
+            { name: "salutation", type: "text", width: 150, title:"salutation" },
             { name: "first_name", type: "text", width: 150, title:"first Name" },
             { name: "middle_name", type: "text", width: 150, title:"middle Name" },
             { name: "last_name", type: "text", width: 150, title:"last Name" },
-            { name: "nick_name", type: "text", width: 150, title:"Nick Name" },
-            { name: "honorific", type: "text", width: 150, title:"honorific" },
-            { name: "email_address", type: "text", width: 150, title:"Phone" },
-            { name: "phone", type: "text", width: 150, title:"SMS" },
-            { name: "sms", type: "text", width: 150, title:"User Name" },
-            { name: "note", type: "text", width: 150, title:"Note" },
-            { name: "is_locked", type: "select", items: db.yesno,title:"Is Admin", valueField: "Id", textField: "Name" },
-            { name: "gets_notifications", title:"Gets Notification",type: "select", items: db.yesno, valueField: "Id", textField: "Name" },
-            { name: "permissions", type: "select",title:"Permissions", items: db.yesno, valueField: "Id", textField: "Name" },
+            // { name: "nick_name", type: "text", width: 150, title:"Nick Name" },
+            // { name: "honorific", type: "text", width: 150, title:"honorific" },
+            { name: "email_address", type: "text", width: 150, title:"email_address" },
+            { name: "phone", type: "text", width: 150, title:"Phone" },
+            // { name: "sms", type: "text", width: 150, title:"User Name" },
+            // { name: "note", type: "text", width: 150, title:"Note" },
+            // { name: "is_locked", type: "select", items: db.yesno,title:"is_locked", valueField: "Id", textField: "Name" },
+            // { name: "gets_notifications", title:"Gets Notification",type: "select", items: db.yesno, valueField: "Id", textField: "Name" },
+            // { name: "permissions", type: "select",title:"Permissions", items: db.yesno, valueField: "Id", textField: "Name" },
             { name: "is_active",title:"Active", type: "select", items: db.yesno, valueField: "Id", textField: "Name"
             },
-            
-            {
-                type: "control",
-                modeSwitchButton: false,
-                editButton: false,
-                itemTemplate: function(value, item) {
-                var $result = $([]);
-                if(item.is_active==1) {
-                    $result = $result.add(this._createDeleteButton(item));
-                }
-                    return $result;
-                },
-                headerTemplate: function() {
-                    return $("<button>").attr("type", "button").text("Add")
-                    .on("click", function () {
-                        showDetailsDialog("Add", {});
-                    });
-                }
-            },
         ],
-        onItemDeleting: function (args) {
-            if (!args.item.deleteConfirmed) { // custom property for confirmation
-                args.cancel = true; // cancel deleting
-                alertify.confirm("The User \"" + args.item.email_address + "\" will be removed. Are you sure?",
-                  function(){
-                      args.item.deleteConfirmed = true;
-                      $("#jsGrid").jsGrid('deleteItem', args.item); //call deleting once more in callback
-              }).setHeader('<em> Confirm Delete </em>');
-            }
-        },
-    });
- 
-    $("#detailsDialog").dialog({
-        autoOpen: false,
-        width: 400,
-        close: function() {
-            $("#detailsForm").validate().resetForm();
-            $("#detailsForm").find(".error").removeClass("error");
-        }
-    });
- 
-    $("#detailsForm").validate({
-       "rules": [% result_set.validation_profile.rules -%],
-       "messages": [% result_set.validation_profile.messages -%],
-    submitHandler: function() {
-            formSubmitHandler();
-        }
-    });
-    var formSubmitHandler = $.noop;
- 
-    var showDetailsDialog = function(dialogType, client) {
+        delete_cnf_field: 'first_name',
+        entity_name: 'Person',
+/*
+#########################################
+    Template Toolkit section
+########################################
+*/
+        form_fields: [% result_set.fields.json -%],
+        validation_rules: [% result_set.validation_profile.rules -%],
+        validation_messages: [% result_set.validation_profile.messages -%]
+    };
 
-        $("#salutation").val(client.salutation);
-        $("#first_name").val(client.first_name);
-        $("#middle_name").val(client.middle_name);
-        $("#last_name").val(client.last_name);
-        $("#nick_name").val(client.nick_name);
-        $("#honorific").val(client.honorific);
-        $("#email_address").val(client.email_address);
-        $("#phone").val(client.phone);
-        $("#sms").val(client.sms);
-        $("#note").val(client.note);
-        $("#is_active").val(client.is_active);
-        $("#is_locked").val(client.is_locked);
- 
-        formSubmitHandler = function() {
-            saveClient(client, dialogType === "Add");
-        };
- 
-        console.log(client);
-        $("#detailsDialog").dialog("option", "title", dialogType + " User").dialog("open");
-    };
- 
-    var saveClient = function(client, isNew) {
-        $.extend(client, {
-            salutation: $("#salutation").val(),
-            first_name: $("#first_name").val(),
-            last_name: $("#last_name").val(),
-            middle_name: $("#middle_name").val(),
-            nick_name: $("#nick_name").val(),
-            honorific: $("#honorific").val(),
-            email_address: $("#email_address").val(),
-            phone: $("#phone").val(),
-            sms: $("#sms").val(),
-            note: $("#note").val(),
-            is_locked: $("#is_locked").val(),
-            is_active: $("#is_active").val()
-        });
- 
-        $("#jsGrid").jsGrid(isNew ? "insertItem" : "updateItem", client);
- 
-        $("#detailsDialog").dialog("close");
-    };
- 
+    load_jsgrid(options);
+
 });
 
 </script>

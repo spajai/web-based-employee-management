@@ -73,21 +73,21 @@ del '/contact' => sub {
 ####################
 # Organizations
 ####################
-get '/organizations' => sub {
+get '/organization' => sub {
     return App::Api::Organizations->new->get();
 };
 
-post '/organizations' => sub {
+post '/organization' => sub {
     my %body_parameters  = params('body');
     return App::Api::Organizations->new->create(\%body_parameters || {});
 };
 
-put '/organizations' => sub {
+put '/organization' => sub {
     my %body_parameters  = params('body');
     return App::Api::Organizations->new->update(\%body_parameters || {});
 };
 
-del '/organizations' => sub {
+del '/organization' => sub {
     my %body_parameters  = params('body');
     return App::Api::Organizations->new->delete(\%body_parameters || {});
 };

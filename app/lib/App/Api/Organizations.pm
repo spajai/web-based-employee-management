@@ -239,7 +239,7 @@ sub _organization_exists {
         $result->{result}  = 0;
         $result->{message} = "Organizations $data->{organization_name} not exists";
 
-    } elsif ( $result->{output} == 1 ) {
+    } elsif ( $result->{output} > 0 ) {
         $result->{result}  = -1;
         $result->{message} = "Organizations $data->{organization_name} already exists";
     }
@@ -261,6 +261,7 @@ sub js_validation_data {
     my ( $self ) = @_;
 
     my $organizations = App::Validation::Organizations->new();
+
     my $js_profile = $organizations->plugin('javascript_objects')->render(
         namespace => 'model',
         fields    => [$organizations->fields->keys],
@@ -394,14 +395,13 @@ Desc   :
 =cut
 sub _form_update_add_fields {
     return qw(
-                organization_name
-                organization_type_id
-                organization_contact_id
-                organization_address_id
-                note_id
-                is_active
-            );
-
+        organization_name
+        organization_type_id
+        organization_contact_id
+        organization_address_id
+        note_id
+        is_active
+    );
 }
 
 

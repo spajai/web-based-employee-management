@@ -49,6 +49,8 @@ sub get {
 
     $result->{validation_profile} = $self->js_validation_data();
 
+    $result->{fields} = [ $self->_form_update_add_fields() ];
+
     return $result;
 }
 
@@ -81,13 +83,12 @@ sub create {
     if ( !$result->{result} ) {
         my $stmt = $self->_create_query();
         #Push the bind values dont change the position
-#short_name distinct
 #insert into note as well get the id
 
         my @bind;
         push (@bind, 
             'contact'                           ,     #entity_name
-            'contact'                           ,     #entity_name #verify 
+            $data->{short_name}                 ,     #entity_name #short_name 
             $data->{comments}        || ''      ,     #comment
             $data->{short_name}                 ,
             $data->{description}     || ''      ,
@@ -128,7 +129,6 @@ sub update {
 
     my $result;
 
-    # ( $result->{result}, $result->{message} ) = $self->_validate_data( $data, ['email_address'] );
     ( $result->{result}, $result->{message} ) = $self->_validate_data( $data,);
 
     #invalid request
@@ -138,7 +138,7 @@ sub update {
 
     if ( $result->{result} == -1 ) {
         my $sql = SQL::Abstract->new;
-        my $where = $data;
+        my $where = {short_name =>delete $data->{short_name} , id =>delete $data->{id}};
         my ( $stmt, @bind ) = $sql->update( $self->{table}, $data,$where);
 
         my $param = {
@@ -173,14 +173,14 @@ sub delete {
     my $result;
 
     #validate only email_address
-    ( $result->{result}, $result->{message} ) = $self->_validate_data( $data );
+    ( $result->{result}, $result->{message} ) = $self->_validate_data( $data,['short_name'] );
 
     #invalid request
     return $result unless ( $result->{result} );
 
     #go ahead and delete
     my $sql   = SQL::Abstract->new;
-    my $where = $data;
+    my $where = {short_name => $data->{short_name},id => $data->{id}};
 
     $data = { "is_active" => 0 };
     my ( $stmt, @bind ) = $sql->update( $self->{table}, $data, $where );
@@ -218,14 +218,14 @@ sub _contact_exists {
 
     my $sql = SQL::Abstract->new;
 
-    #to avoid duplciate since we dont have unique combination
+    #to avoid dupluciate since we dont have unique combination
 
     # select 1 from contacts where short_name = <value> 
  
     #remove
- #and description =<value> and person_id = <value> and address_list_id = <value> and note_id = <value> and is_active = <value>;
+    my $where = {short_name => $data->{short_name} , id => $data->{id}};
 
-    my ( $stmt, @bind ) = $sql->select( $self->{table}, ['1'], $data);
+    my ( $stmt, @bind ) = $sql->select( $self->{table}, ['1'], $where);
 
     my $param = {
         action => 'select',
@@ -241,7 +241,7 @@ sub _contact_exists {
         $result->{result}  = 0;
         $result->{message} = "Contact not exists";
 
-    } elsif ( $result->{output} == 1 ) {
+    } elsif ( $result->{output} > 0 ) {
         $result->{result}  = -1;
         $result->{message} = "Contact already exists";
     }
@@ -381,4 +381,27 @@ sub _get_query {
 
     return $sql;
 }
+
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns:
+
+Desc   :
+
+=cut
+sub _form_update_add_fields {
+    return qw(
+      short_name
+      description
+      person_id
+      address_list_id
+      note_id
+      is_active
+    );
+}
+
 1;

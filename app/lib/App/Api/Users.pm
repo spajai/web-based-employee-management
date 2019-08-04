@@ -46,9 +46,11 @@ sub get {
     my $sql = $self->_get_query();
 
     my $result = $dbh->selectrow_hashref($sql);
+
     $result->{validation_profile} = $self->js_validation_data();
-    #"rules" : $result->{validation_profile}->{rules}
-    #"message" : $result->{validation_profile}->{message}
+
+    $result->{fields} = [ $self->_form_update_add_fields() ];
+
     return $result;
 }
 
@@ -85,14 +87,14 @@ sub create {
         my $stmt               = $self->_create_query();
         my @bind;
         push (@bind,
-                'user'                          ,
-                $data->{username}               ,#entity_name
-                $data->{comments} || ''         ,
-                $data->{username}               ,
-                $data->{is_admin}               ,
-                $data->{gets_notifications}     ,
-                $data->{permissions}            ,
-                $data->{is_active}              ,
+                'user'                           ,
+                $data->{username}                ,#entity_name
+                $data->{comments}          || '' ,
+                $data->{username}                ,
+                $data->{is_admin}                ,
+                $data->{gets_notifications}      ,
+                $data->{permissions}             ,
+                $data->{is_active}         || 1  ,
         );
 
         my $param = {
@@ -230,12 +232,12 @@ sub _user_exists {
     };
 
     $result = $self->{_utils}->send_to_db( $param );    #execute on db
-
+print Dumper $result;
     if ( $result->{output} eq '0E0' ) {
         $result->{result}  = 0;
         $result->{message} = "user $data->{username} not exists";
 
-    } elsif ( $result->{output} == 1 ) {
+    } elsif ( $result->{output} > 0 ) { #it will be more than 0
         $result->{result}  = -1;
         $result->{message} = "user $data->{username} already exists";
     }
@@ -289,10 +291,9 @@ sub _validate_data {
     $valid   = 1;       #validation will set this flag off
     $message = undef;
     my %data_copy = %{clone ($data) };
+
     my $users = App::Validation::Users->new( %data_copy );
-    
-    print Dumper $data,\%data_copy;
-    
+
     if ( defined $fields && ref $fields eq 'ARRAY' ) {
 
         #validated given fields only
@@ -378,4 +379,29 @@ sub _get_query {
 
     return $sql;
 }
+
+
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns:
+
+Desc   :
+
+=cut
+sub _form_update_add_fields {
+    return qw(
+      username
+      is_admin
+      gets_notifications
+      permissions
+      is_active
+    );
+      # last_login
+}
+
+
 1;

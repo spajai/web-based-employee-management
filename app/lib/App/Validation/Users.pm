@@ -49,12 +49,12 @@ field permissions => {
     },
 };
 
-field is_active => {
-    mixin    => [':num'], 
-    messages => {
-        required => 'field %s is required',
-    },
-};
+# field is_active => {
+    # mixin    => [':num'], 
+    # messages => {
+        # required => 'field %s is required',
+    # },
+# };
 
 
 #Rules for created_by

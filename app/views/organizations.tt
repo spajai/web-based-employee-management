@@ -56,7 +56,7 @@
         insertItem: function(insertingClient) {
             var options = {
                 type: 'POST',
-                route: "/api/v1/organizations",
+                route: "/api/v1/organization",
                 params: {
                     organization_name:       insertingClient.organization_name,
                     organization_type_id:    insertingClient.organization_type_id,
@@ -74,7 +74,7 @@
         updateItem: function(updatingClient) {
              var options = {
                 type: 'PUT',
-                route: "/api/v1/organizations",
+                route: "/api/v1/organization",
                 params: {
                     organization_name:       updatingClient.organization_name,
                     organization_type_id:    updatingClient.organization_type_id,
@@ -94,7 +94,7 @@
             this.clients.splice(clientIndex, 1);
               var options = {
                 type: 'DELETE',
-                route: "/api/v1/organizations",
+                route: "/api/v1/organization",
                 params: {
                     organization_name:       deletingClient.organization_name,
                     id:                      deletingClient.id

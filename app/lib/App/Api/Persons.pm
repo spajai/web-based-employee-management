@@ -49,6 +49,8 @@ sub get {
 
     $result->{validation_profile} = $self->js_validation_data();
 
+    $result->{fields} = [ $self->_form_update_add_fields() ];
+
     return $result;
 }
 
@@ -282,13 +284,15 @@ sub _person_exists {
 
     $result = $self->{_utils}->send_to_db( $param );    #execute on db
 
+    my $unique_person = "$data->{first_name} $data->{middle_name} $data->{last_name} <$data->{email_address}>";
+
     if ( $result->{output} eq '0E0' ) {
         $result->{result}  = 0;
-        $result->{message} = "Person with email $data->{email_address} not exists";
+        $result->{message} = "Person with email $unique_person not exists";
 
-    } elsif ( $result->{output} == 1 ) {
+    } elsif ( $result->{output} > 0 ) {
         $result->{result}  = -1;
-        $result->{message} = "Person with email $data->{email_address} already exists";
+        $result->{message} = "Person with email $unique_person already exists";
     }
 
     return ( $result->{result}, $result->{message} );
@@ -393,7 +397,7 @@ sub _get_query {
         select array_to_json(array_agg(row_to_json(person_data))) as data
                 from (
                     select
-                        salutation, first_name, last_name, middle_name, nick_name, honorific, email_address, phone_id, sms_id, note_id, managed_by, timezone, is_locked, is_active, created_by
+                        id,salutation, first_name, last_name, middle_name, nick_name, honorific, email_address, phone_id, sms_id, note_id, managed_by, timezone, is_locked, is_active, created_by
                     from
                         persons
                     order by
@@ -403,4 +407,35 @@ sub _get_query {
 
     return $sql;
 }
+
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns:
+
+Desc   :
+
+=cut
+sub _form_update_add_fields {
+    return qw(
+        salutation
+        first_name
+        last_name
+        middle_name
+        nick_name
+        honorific
+        email_address
+        phone_id
+        sms_id
+        note_id
+        managed_by
+        is_locked
+        is_active
+    );
+        # timezone
+}
+
 1;

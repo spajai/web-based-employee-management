@@ -49,13 +49,13 @@ field sms_id     => { mixin   => 'id'   };
 
 field note_id    => { mixin   => 'id'   };
 
-field managed_by => { mixin   => 'id'   };
+# field managed_by => { mixin   => 'id'   };
 
 field is_locked  => { mixin   => 'bool' };
 
 field is_active  => { mixin   => 'bool' };
 
-field created_by => { mixin   => 'id'   };
+# field created_by => { mixin   => 'id'   };
 
 
 # CREATE TABLE public.persons (
