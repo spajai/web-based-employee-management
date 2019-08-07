@@ -2,7 +2,7 @@
 
  <h1>Data Manipulation</h1>
     <div id="jsGrid"></div>
-    <div id="detailsDialog">
+    <div id="detailsDialog" hidden>
 
         <form id="detailsForm">
             <div class="details-form-field">
@@ -43,18 +43,13 @@
             </div>
         </form>
     </div>
+<script src="test/common.js"></script>
 <script>
-
-
-
-
-
 (function() {
 
     var db = {
         loadData: function(filter) {
             return $.grep(this.clients, function(client) {
-                
                 return (!filter.username || !client.username || client.username.indexOf(filter.username) > -1)
                     && (!filter.is_admin || client.is_admin == filter.is_admin)
                     && (!filter.is_active || client.is_active == filter.is_active)
@@ -63,16 +58,13 @@
             });
         },
 
-
         insertItem: function(insertingClient) {
             var options = {
                 type: 'POST',
                 route: "/api/v1/contact",
                 params: insertingClient
             };
-
             build_ajax_request(options);
-            
         },
 
         updateItem: function(updatingClient) {
@@ -81,7 +73,6 @@
                 route: "/api/v1/contact",
                 params: updatingClient
             };
-
             build_ajax_request(options);
         },
 

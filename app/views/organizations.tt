@@ -38,7 +38,7 @@
         </form>
     </div>
 
-
+<script src="test/common.js"></script>
 <script>
 (function() {
     var db = {

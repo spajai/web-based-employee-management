@@ -1,8 +1,8 @@
 [% USE JSON ( pretty => 1 ) %];
 
  <h1>Data Manipulation</h1>
-    <div id="jsGrid"></div>
-    <div id="detailsDialog">
+    <div id="jsGrid" =></div>
+    <div id="detailsDialog" hidden>
         <form id="detailsForm">
             <div class="details-form-field">
                 <label for="username">Username</label>
@@ -38,6 +38,9 @@
             </div>
         </form>
     </div>
+
+
+<script src="test/common.js"></script>
 <script>
 
 (function() {
@@ -118,8 +121,7 @@ $(function() {
             { name: "is_admin", type: "select", items: db.yesno,title:"Is Admin", valueField: "Id", textField: "Name" },
             { name: "gets_notifications", title:"Gets Notification",type: "select", items: db.yesno, valueField: "Id", textField: "Name" },
             { name: "permissions", type: "select",title:"Permissions", items: db.yesno, valueField: "Id", textField: "Name" },
-            { name: "is_active",title:"Active", type: "select", items: db.yesno, valueField: "Id", textField: "Name"
-            }
+            { name: "is_active",title:"Active", type: "select", items: db.yesno, valueField: "Id", textField: "Name" }
         ],
         delete_cnf_field: 'username',
         entity_name: 'User',
@@ -135,6 +137,8 @@ $(function() {
 
     load_jsgrid(options);
 
+$('#detailsDialog').removeAttr('hidden');
 });
+
 
 </script>

@@ -51,6 +51,42 @@ sub get {
 
     $result->{fields} = [ $self->_form_update_add_fields() ];
 
+    $result->{form_layout} = 1;
+
+    return $result;
+}# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns: 
+
+Desc   : 
+
+=cut
+
+sub get_for_edit {
+    my ( $self, $id ) = ( @_ );
+
+    my $result = {
+        message => "user not found",
+        result => 0
+    };
+    return $result unless ($id =~ /^[0-9]*$/);
+
+    my $dbh = $self->{_utils}->get_dbh();    #get dbh
+
+    my $sql = $self->_get_person_query();
+
+    $result = $dbh->selectrow_hashref($sql,undef,$id);
+
+    $result->{validation_profile} = $self->js_validation_data();
+
+    $result->{fields} = [ $self->_form_update_add_fields() ];
+
+    # $result->{form_layout} = 1;
+
     return $result;
 }
 
@@ -437,5 +473,26 @@ sub _form_update_add_fields {
     );
         # timezone
 }
+
+# ========================================================================== #
+
+=item B<>
+
+Params : NA
+
+Returns:
+
+Desc   :
+
+=cut
+sub _get_person_query {
+
+    my $sql = q(
+       select * from persons where id = ? limit 1; 
+    );
+
+    return $sql;
+}
+
 
 1;

@@ -1,3 +1,23 @@
+function notification (response){
+    if(response){
+         if(response.result == 1) {
+            alertify.success(response.message); 
+            window.location.reload();
+            // $("#grid").jsGrid("loadData");
+
+         }
+         if(response.result == 0 ) {
+            alertify.error(response.message); 
+         }
+         if(response.result == -1 ) {
+            alertify.warning(response.message); 
+         }
+   } else {
+        alertify.error("No response from server");
+   }
+}
+
+alertify.set('notifier','position', 'top-right');
 
 function load_jsgrid(options) {
 
@@ -6,18 +26,64 @@ function load_jsgrid(options) {
     var control_field = {
         type: "control",
         modeSwitchButton: false,
-        editButton: false,
+        // editButton: true,
+        
         itemTemplate: function(value, item) {
-        var $result = $([]);
-        if(item.is_active==1) {
-            $result = $result.add(this._createDeleteButton(item));
-        }
+            var $result = $([]);
+            if(item.is_active==1) {
+                var $customEditButton = $("<button>").attr({class: "customGridEditbutton jsgrid-button jsgrid-edit-button"})
+                  .click(function(e) {
+                        var newForm = $('<form>', {
+                            'action': '/?edit=person&id=' + item.id,
+                            'method': 'post'
+                        });
+                        newForm.appendTo('body').submit();
+                        e.stopPropagation();
+                  });
+
+                $result = $result.add($customEditButton);
+                $result = $result.add(this._createDeleteButton(item));
+                
+            }
             return $result;
         },
+        // headerTemplate: function() {
+            // return $("<button>").attr("type", "button").text("Add")
+            // .on("click", function () {
+                // var newForm = $('<form>', {
+                            // 'action': '/person/add/',
+                            // 'method': 'post'
+                        // });
+                        // newForm.appendTo('body').submit();
+            // });
+        // }
+        
+        
+        
+
+  
+        
+        
+        
+        
+        
+        
+        
+        
         headerTemplate: function() {
             return $("<button>").attr("type", "button").text("Add")
             .on("click", function () {
-                showDetailsDialog("Add", {});
+                var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("demo").innerHTML =
+      this.responseText;
+    }
+  };
+  xhttp.open("GET", "xmlhttp_info.txt", true);
+  xhttp.send();
+
+                // showDetailsDialog("Add", {});
             });
         }
     };

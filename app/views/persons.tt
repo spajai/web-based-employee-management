@@ -2,80 +2,11 @@
 
  <h1>Data Manipulation</h1>
     <div id="jsGrid"></div>
-    <div id="detailsDialog">
-        <form id="detailsForm">
-            <div class="details-form-field">
-                <label for="salutation">salutation</label>
-                <input id="salutation" name="salutation" type="text" />
-            </div>
-            <div class="details-form-field">
-                <label for="first_name">first_name</label>
-                <input id="first_name" name="first_name" type="text" />
-            </div>
-            <div class="details-form-field">
-                <label for="middle_name">middle_name</label>
-                <input id="middle_name" name="middle_name" type="text" />
-            </div>
-            <div class="details-form-field">
-                <label for="last_name">last_name</label>
-                <input id="last_name" name="last_name" type="text" />
-            </div>
-            <div class="details-form-field">
-                <label for="nick_name">nick_name</label>
-                <input id="nick_name" name="nick_name" type="text" />
-            </div>
-            <div class="details-form-field">
-                <label for="honorific">honorific</label>
-                <input id="honorific" name="honorific" type="text" />
-            </div>
-            <div class="details-form-field">
-                <label for="email_address">email_address</label>
-                <input id="email_address" name="email_address" type="text" />
-            </div>
-            <div class="details-form-field">
-                <label for="phone">pone</label>
-                <input id="phone" name="phone" type="text" />
-            </div>
-            <div class="details-form-field">
-                <label for="note_id">note</label>
-                <input id="note_id" name="note" type="textarea" />
-            </div>
-            <div class="details-form-field">
-                <label for="sms">sms</label>
-                <input id="sms" name="sms" type="text" />
-            </div>
-            <div class="details-form-field">
-                <label for="is_active">is_active:</label>
-                <select id="is_active" name="is_active">
-                    <option value="">(Select)</option>
-                    <option value="0">No</option>
-                    <option value="1">Yes</option>
-                </select>
-            </div>
-            <div class="details-form-field">
-                <label for="gets_notifications">Get Notification:</label>
-                <select id="gets_notifications" name="gets_notifications">
-                    <option value="">(Select)</option>
-                    <option value="0">No</option>
-                    <option value="1">Yes</option>
-                </select>
-            </div>
-            <div class="details-form-field">
-                <label for="is_locked">is_locked:</label>
-                <select id="is_locked" name="is_locked">
-                    <option value="">(Select)</option>
-                    <option value="0">No</option>
-                    <option value="1">Yes</option>
-                </select>
-            </div>
-            <div class="details-form-field">
-                <button type="submit" id="save">Save</button>
-            </div>
-        </form>
-    </div>
+</div>
+
+
+<script src="test/conmmon_new_form.js"></script>
 <script>
-
-
 (function() {
     var db = {
         loadData: function(filter) {
@@ -177,11 +108,11 @@ $(function() {
             { name: "salutation", type: "text", width: 150, title:"salutation" },
             { name: "first_name", type: "text", width: 150, title:"first Name" },
             { name: "middle_name", type: "text", width: 150, title:"middle Name" },
-            { name: "last_name", type: "text", width: 150, title:"last Name" },
+            { name: "last_name", type: "text", width: 80, title:"last Name" },
             // { name: "nick_name", type: "text", width: 150, title:"Nick Name" },
             // { name: "honorific", type: "text", width: 150, title:"honorific" },
             { name: "email_address", type: "text", width: 150, title:"email_address" },
-            { name: "phone", type: "text", width: 150, title:"Phone" },
+            { name: "phone", type: "text", width: 80, title:"Phone" },
             // { name: "sms", type: "text", width: 150, title:"User Name" },
             // { name: "note", type: "text", width: 150, title:"Note" },
             // { name: "is_locked", type: "select", items: db.yesno,title:"is_locked", valueField: "Id", textField: "Name" },

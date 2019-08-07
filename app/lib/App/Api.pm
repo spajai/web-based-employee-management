@@ -26,8 +26,9 @@ put '/user' => sub {
 del '/user' => sub {
     my %body_parameters  = params('body');
     return App::Api::Users->new->delete(\%body_parameters || {});
-      
 };
+
+
 ####################
 # person
 ####################
