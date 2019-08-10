@@ -46,7 +46,7 @@ sub get {
 
     my $sql = $self->_get_query();
 
-    my $result = $dbh->selectrow_hashref($sql);
+    my $result = $dbh->selectrow_hashref( $sql );
 
     $result->{validation_profile} = $self->js_validation_data();
 
@@ -77,27 +77,29 @@ sub create {
     #invalid request
     return $result unless ( $result->{result} );
 
-    #check if user exists
+    #check if org exists
     ( $result->{result}, $result->{message} ) = $self->_organization_exists( $data );
     return $result if ( $result->{result} == -1 );
 
     if ( !$result->{result} ) {
 
-        my $stmt               = $self->_create_query();
-        my $object_name        = 'organization';
-#   note id 
-        my @bind;
-        push (@bind, 
-            'organization'                                  ,     #object_name
-            $data->{organization_name}                      ,     #entity_name
-            $data->{comments}                    || ''      ,
-            $data->{organization_type_id}        || undef   ,
-            $data->{organization_contact_id}     || undef   ,
-            $data->{organization_address_id}     || undef   ,
-            $data->{note_id}                     || ''      ,
-            $data->{is_active}                              ,
-        );
+        my $stmt        = $self->_create_query();
+        my $object_name = 'organization';
 
+        #   note id
+        my @bind;
+        push(
+            @bind,
+            'organization',                #object_name
+            $data->{organization_name},    #entity_name
+            $data->{comments}                || '',
+            $data->{organization_name}             ,
+            $data->{organization_type_id}    || undef,
+            $data->{organization_contact_id} || undef,
+            $data->{organization_address_id} || undef,
+            $data->{note_id}                 || '',
+            $data->{is_active}               // 1,
+        );
         my $param = {
             action => 'creat',
             stmt   => $stmt,
@@ -230,7 +232,7 @@ sub _organization_exists {
         stmt   => $stmt,
         bind   => [@bind],
         entity => 'Organizations',
-        output => 1,          #since we need output
+        output => 1,                 #since we need output
     };
 
     $result = $self->{_utils}->send_to_db( $param );    #execute on db
@@ -246,6 +248,7 @@ sub _organization_exists {
 
     return ( $result->{result}, $result->{message} );
 }
+
 # ========================================================================== #
 
 =item B<>
@@ -257,14 +260,15 @@ Returns:
 Desc   : 
 
 =cut
+
 sub js_validation_data {
     my ( $self ) = @_;
 
     my $organizations = App::Validation::Organizations->new();
 
-    my $js_profile = $organizations->plugin('javascript_objects')->render(
+    my $js_profile = $organizations->plugin( 'javascript_objects' )->render(
         namespace => 'model',
-        fields    => [$organizations->fields->keys],
+        fields    => [ $organizations->fields->keys ],
         include   => [qw/required min_length max_length messages pattern/]
     );
 
@@ -328,7 +332,7 @@ Desc   :
 
 sub _create_query {
 
-    my $binds_symbol = join (',' , ( ('?') x 6 ));
+    my $binds_symbol = join( ',', ( ( '?' ) x 6 ) );
 
     my $sql = qq(
         with entity_object as (
@@ -382,6 +386,7 @@ sub _get_query {
 
     return $sql;
 }
+
 # ========================================================================== #
 
 =item B<>
@@ -393,16 +398,16 @@ Returns:
 Desc   :
 
 =cut
+
 sub _form_update_add_fields {
     return qw(
-        organization_name
-        organization_type_id
-        organization_contact_id
-        organization_address_id
-        note_id
-        is_active
+      organization_name
+      organization_type_id
+      organization_contact_id
+      organization_address_id
+      note_id
+      is_active
     );
 }
-
 
 1;

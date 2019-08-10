@@ -4,7 +4,6 @@ function notification (response){
             alertify.success(response.message); 
             window.location.reload();
             // $("#grid").jsGrid("loadData");
-
          }
          if(response.result == 0 ) {
             alertify.error(response.message); 
@@ -20,14 +19,10 @@ function notification (response){
 alertify.set('notifier','position', 'top-right');
 
 function load_jsgrid(options) {
-
     var $grid = $('#' + options.grid_name);
- 
     var control_field = {
         type: "control",
         modeSwitchButton: false,
-        // editButton: true,
-        
         itemTemplate: function(value, item) {
             var $result = $([]);
             if(item.is_active==1) {
@@ -40,51 +35,20 @@ function load_jsgrid(options) {
                         newForm.appendTo('body').submit();
                         e.stopPropagation();
                   });
-
                 $result = $result.add($customEditButton);
                 $result = $result.add(this._createDeleteButton(item));
-                
             }
             return $result;
         },
-        // headerTemplate: function() {
-            // return $("<button>").attr("type", "button").text("Add")
-            // .on("click", function () {
-                // var newForm = $('<form>', {
-                            // 'action': '/person/add/',
-                            // 'method': 'post'
-                        // });
-                        // newForm.appendTo('body').submit();
-            // });
-        // }
-        
-        
-        
-
-  
-        
-        
-        
-        
-        
-        
-        
-        
-        headerTemplate: function() {
-            return $("<button>").attr("type", "button").text("Add")
-            .on("click", function () {
-                var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("demo").innerHTML =
-      this.responseText;
-    }
-  };
-  xhttp.open("GET", "xmlhttp_info.txt", true);
-  xhttp.send();
-
-                // showDetailsDialog("Add", {});
-            });
+        headerTemplate: function(value, item) {
+            var $result = $([]);
+            var $customAddButton = $("<button>").attr({class: "jsgrid-header-cell jsgrid-control-field jsgrid-align-center btn btn-success btn-block"}).html("Add")
+                  .click(function(e) {
+                      window.location.href = '/?edit=person&id=New';
+                        e.stopPropagation();
+                  });
+                $result = $result.add($customAddButton);
+                return $result;
         }
     };
     options.fields.push(control_field);
@@ -113,7 +77,7 @@ function load_jsgrid(options) {
             if(args.item.is_active == 1){
                 showDetailsDialog("Edit", args.item);
             }
-        },    
+        },
         fields: options.fields,
         onItemDeleting: function (args) {
             if (!args.item.deleteConfirmed) { // custom property for confirmation
@@ -126,13 +90,12 @@ function load_jsgrid(options) {
             }
         },
     });
-    
+
     var saveClient = function(client, isNew) {
         var save_options = {};
         for (field of options.form_fields) {
             save_options[field] = $('#'+field).val();
         }
-        
         $.extend(client, save_options);
         $grid.jsGrid(isNew ? "insertItem" : "updateItem", client);
         $("#detailsDialog").dialog("close");
@@ -148,28 +111,22 @@ function load_jsgrid(options) {
     var formSubmitHandler = $.noop;
 
     var showDetailsDialog = function(dialogType, client) {
-
         //set fields value for update model
         for (field of options.form_fields) {
             if ( client[field] === true ) {
                 client[field] = 1;
             }
-            
             if ( client[field] === false ) {
                 client[field] = 0;
             }
-            
             $('#' + field).val(client[field]);
         }
 
         formSubmitHandler = function() {
             saveClient(client, dialogType === "Add");
         };
- 
         $("#detailsDialog").dialog("option", "title", dialogType + " Client").dialog("open");
     };
-
-    
     $("#detailsDialog").dialog({
         autoOpen: false,
         width: 400,
@@ -180,10 +137,8 @@ function load_jsgrid(options) {
     });
 }
 
-
 function build_ajax_request (options) {
-
-     $.ajax({
+    $.ajax({
         type: options.type,
         url: options.route,
         contentType: "application/json; charset=utf-8",
@@ -197,5 +152,4 @@ function build_ajax_request (options) {
             this.clients.push(insertingClient);
         }
     });
-    
 }

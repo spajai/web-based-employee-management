@@ -1,4 +1,4 @@
-<form id="person_form" class="form-horizontal" method="post" action="/api/v1/person">
+<form id="person_form" class="form-horizontal" method="[% result_set.method %]" action="/api/v1/person">
 
   <div class="form-group">
     <label class="control-label col-sm-2" for="salutation">salutation:</label>
@@ -8,31 +8,40 @@
   </div>
 
   <div class="form-group">
-    <label class="control-label col-sm-2" for="first_name">first_name:</label>
+    <label class="control-label col-sm-2" for="first_name">First Name:</label>
     <div class="col-sm-10">
-      <input type="first_name" value="[% result_set.first_name %]" class="form-control" name="first_name" placeholder="Enter first_name">
+      <input type="first_name" value="[% result_set.first_name %]" class="form-control" name="first_name" placeholder="Enter first_name" [% result_set.disabled %]>
+      [% IF result_set.hidden %]
+      <input type="hidden" value="[% result_set.first_name %]" class="form-control" name="first_name" placeholder="Enter first_name">
+      [% END %]
     </div>
   </div>
   <div class="form-group">
-    <label class="control-label col-sm-2" for="last_name">last_name:</label>
+    <label class="control-label col-sm-2" for="last_name">Last Name:</label>
     <div class="col-sm-10">
-      <input type="last_name" value="[% result_set.last_name %]"  class="form-control" name="last_name" placeholder="Enter last_name">
+      <input type="last_name" value="[% result_set.last_name %]"  class="form-control" name="last_name" placeholder="Enter last_name" [% result_set.disabled %]>
+    [% IF result_set.hidden %]
+     <input type="hidden" value="[% result_set.last_name %]"  class="form-control" name="last_name" placeholder="Enter last_name">
+    [% END %]
     </div>
   </div>
   <div class="form-group">
     <label class="control-label col-sm-2" for="middle_name">middle_name:</label>
     <div class="col-sm-10">
-      <input type="middle_name" value="[% result_set.middle_name %]" class="form-control" name="middle_name" placeholder="Enter middle_name">
+      <input type="middle_name" value="[% result_set.middle_name %]" class="form-control" name="middle_name" placeholder="Enter middle_name" [% result_set.disabled %]>
+        [% IF result_set.hidden %]
+      <input type="hidden" value="[% result_set.middle_name %]" class="form-control" name="middle_name" placeholder="Enter middle_name">
+       [% END %]
     </div>
   </div>
   <div class="form-group">
-    <label class="control-label col-sm-2" for="nick_name">nick_name:</label>
+    <label class="control-label col-sm-2" for="nick_name">Nick Name:</label>
     <div class="col-sm-10">
       <input type="nick_name" value="[% result_set.nick_name %]"  class="form-control" name="nick_name" placeholder="Enter nick_name">
     </div>
   </div>
   <div class="form-group">
-    <label class="control-label col-sm-2" for="honorific">honorific:</label>
+    <label class="control-label col-sm-2" for="honorific">Honorific:</label>
     <div class="col-sm-10">
       <input type="honorific" value="[% result_set.honorific %]" class="form-control" name="honorific" placeholder="Enter honorific">
     </div>
@@ -40,7 +49,10 @@
   <div class="form-group">
     <label class="control-label col-sm-2" for="email_address">email_address:</label>
     <div class="col-sm-10">
-      <input type="email_address" value="[% result_set.email_address %]" class="form-control" name="email_address" placeholder="Enter email_address">
+      <input type="email_address" value="[% result_set.email_address %]" class="form-control" name="email_address" placeholder="Enter email_address" [% result_set.disabled %]>
+    [% IF result_set.hidden %]
+      <input type="hidden" value="[% result_set.email_address %]" class="form-control" name="email_address" placeholder="Enter email_address">
+    [% END %]
     </div>
   </div>
   <div class="form-group">
@@ -50,39 +62,38 @@
     </div>
   </div>
   <div class="form-group">
-    <label class="control-label col-sm-2" for="sms_id">sms_id:</label>
+    <label class="control-label col-sm-2" for="sms_id">SMS:</label>
     <div class="col-sm-10">
       <input type="sms_id" value="[% result_set.sms_id %]" class="form-control" name="sms_id" placeholder="Enter sms_id">
     </div>
   </div>
  <div class="form-group">
-    <label class="control-label col-sm-2" for="note_id">note_id:</label>
+    <label class="control-label col-sm-2" for="note_id">Note:</label>
     <div class="col-sm-10">
       <input type="note_id"  value="[% result_set.note_id %]" class="form-control" name="note_id" placeholder="Enter note_id">
     </div>
   </div>
   <div class="form-group">
-    <label class="control-label col-sm-2" for="managed_by">managed_by:</label>
+    <label class="control-label col-sm-2" for="managed_by">Managed:</label>
     <div class="col-sm-10">
       <input type="managed_by"  value="[% result_set.managed_by %]" class="form-control" name="managed_by" placeholder="Enter managed_by">
     </div>
   </div>
   <div class="form-group">
-    <label class="control-label col-sm-2" for="is_locked">is_locked:</label>
+    <label class="control-label col-sm-2" for="is_locked">Is Locked:</label>
     <div class="col-sm-10">
       <input type="is_locked" value="[% result_set.is_locked %]" class="form-control" name="is_locked" placeholder="Enter is_locked">
     </div>
   </div>
-  <div class="form-group">
-    <label class="control-label col-sm-2" for="is_active">is_active:</label>
-    <div class="col-sm-10">
-      <input type="is_active" value="[% result_set.is_active %]" class="form-control" name="is_active" placeholder="Enter is_active">
-    </div>
-  </div>
-
+  <!-- <div class="form-group"> -->
+    <!-- <label class="control-label col-sm-2" for="is_active">Is Active:</label> -->
+    <!-- <div class="col-sm-10"> -->
+      <!-- <input type="is_active" value="[% result_set.is_active %]" class="form-control" name="is_active" placeholder="Enter is_active"> -->
+    <!-- </div> -->
+  <!-- </div> -->
   <div class="form-group"> 
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-success">Submit</button>
+      <button type="submit" class="btn btn-success">[% result_set.button %]</button>
       <input type="hidden" id="id" name="id" value="[% result_set.id %]">
       <button type="reset" class="btn btn-primary">reset</button>
     </div>
@@ -90,36 +101,33 @@
 </form>
 
 <script>
-$(document).ready(function(){
-    
+$(document).ready(function() {
     $("#person_form").validate({
-            "rules": [% result_set.validation_profile.rules -%],
-            "messages": [% result_set.validation_profile.messages -%],
-            submitHandler: function(form) {
-                
-                var params = JSON.stringify($('#person_form').serializeObject());
-                console.log(params);
-        
-                // ajax call here
-                $.ajax({
-                    type: form.method,
-                    url: form.action,
-                    contentType: "application/json; charset=utf-8",
-                    data: params,
-                    dataType: "JSON",
-                    error : function(xhr, textStatus, errorThrown) {
-                        notification(errorThrown); 
-                    },
-                    success:function(response){
-                        notification(response);
-                        window.location.href('/?view=person');
+        "rules": [% result_set.validation_profile.rules -%],
+        "messages": [% result_set.validation_profile.messages -%],
+        submitHandler: function(form) {
+            var params = JSON.stringify($('#person_form').serializeObject());
+            // ajax call here
+            $.ajax({
+                type:"[% result_set.method %]",
+                url: form.action,
+                contentType: "application/json; charset=utf-8",
+                data: params,
+                dataType: "JSON",
+                error : function(xhr, textStatus, errorThrown) {
+                    notification(errorThrown); 
+                },
+                success:function(response) {
+                    notification(response);
+                    [% UNLESS result_set.hidden %]
+                    if(response.result == 1) {
+                        setTimeout( function redirect()  { window.location.href = '/?view=persons'},5000);
                     }
-                });
-                
-                return false;
-            }
-        });
-    
-
+                    [% END %]
+                }
+            });
+            return false;
+        }
+    });
 });
 </script>

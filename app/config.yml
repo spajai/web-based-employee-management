@@ -69,3 +69,8 @@ Mutable:
 #      cookie_name: eshop.session
 #      is_secure: 1
 #      is_http_only: 1
+logger: "file"
+ 
+engines:
+  logger:
+    log: 'core'

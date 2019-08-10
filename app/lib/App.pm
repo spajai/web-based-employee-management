@@ -16,8 +16,9 @@ any  ['get','post'] => '/' => sub {
     }
 
     my $form  = query_parameters->get('edit');
-    my $id    = query_parameters->get('id');
-    if(defined $form && defined $id) {
+    my $id    = query_parameters->get('id') || undef; #undef means new form
+    # if(defined $form && defined $id) {
+    if(defined $form) {
         forward "/edit/$form/$id";
     }
 
@@ -47,7 +48,7 @@ get '/view/persons' => sub {
     #######################
     any [qw/get post/] => '/edit/person/:id' => sub {
         my $id  = route_parameters->get('id');
-        my $data =  App::Api::Persons->new->get_for_edit($id);
+        my $data =  App::Api::Persons->new->get_for_edit($id || undef);
         send_as html => template 'persons_edit.tt', {wrapper => undef ,result_set =>  $data};
 
         # { wrapper => 'layouts/main.tt' };

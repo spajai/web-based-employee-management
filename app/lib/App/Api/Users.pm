@@ -1,12 +1,10 @@
 package App::Api::Users;
-
 use strict;
 use warnings;
 use File::FindLib 'lib';
 use SQL::Abstract;
 use App::Validation::Users;
 use App::Utils;
-#constructor
 use Data::Dumper;
 use Clone qw<clone>;
 
@@ -264,7 +262,7 @@ sub js_validation_data {
         fields    => [$users->fields->keys],
         include   => [qw/required min_length max_length messages/]
     );
-      return $js_profile;
+    return $js_profile;
 }
 
 # ========================================================================== #
@@ -380,7 +378,6 @@ sub _get_query {
     return $sql;
 }
 
-
 # ========================================================================== #
 
 =item B<>
@@ -402,6 +399,5 @@ sub _form_update_add_fields {
     );
       # last_login
 }
-
 
 1;

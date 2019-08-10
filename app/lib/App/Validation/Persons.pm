@@ -11,24 +11,24 @@ adopt "App::Validation::Common", mixin => 'name_field';
 
 #Todo discuss 5char max
 #prefix
-field salutation  => { mixin => 'name_field', };
+field salutation  => { mixin => 'name_field', required => 0 };
 
 field first_name  => { mixin => 'name_field', };
 
 field last_name   => { mixin => 'name_field', };
 
-field middle_name => { mixin => 'name_field', };
+field middle_name => { mixin => 'name_field', required => 0 };
 
-field nick_name   => { mixin => 'name_field', };
+field nick_name   => { mixin => 'name_field', required => 0 };
 
 #degree
 
 field honorific => {
-    required => 1,
+    required => 0,
     mixin    => [':str'],
-    messages => {
-        required => 'field %s is required',
-    },
+    # messages => {
+        # required => 'field %s is required',
+    # },
     filters => [qw/trim/]
 };
 
@@ -53,33 +53,9 @@ field note_id    => { mixin   => 'id'   };
 
 field is_locked  => { mixin   => 'bool' };
 
-field is_active  => { mixin   => 'bool' };
+# field is_active  => { mixin   => 'bool' };
 
 # field created_by => { mixin   => 'id'   };
 
-
-# CREATE TABLE public.persons (
-# entity_id int8 NULL,
-
-# salutation text NOT NULL DEFAULT ''::text,
-# first_name text NOT NULL DEFAULT ''::text,
-# last_name text NOT NULL DEFAULT ''::text,
-# middle_name text NOT NULL DEFAULT ''::text,
-# nick_name text NOT NULL DEFAULT ''::text,
-
-# honorific text NOT NULL DEFAULT ''::text,
-# email_address text NOT NULL DEFAULT ''::text,
-# phone_id text NOT NULL DEFAULT ''::text,
-# sms_id text NOT NULL DEFAULT ''::text,
-# note_id text NOT NULL DEFAULT ''::text,
-# created_by int4 NULL,
-# modified_by int4 NULL,
-# managed_by int4 NULL,
-
-# timezone text NOT NULL DEFAULT 'UTC'::text,
-# is_locked bool NULL DEFAULT false,
-# is_active bool NOT NULL DEFAULT true,
-
-# );
 
 1;

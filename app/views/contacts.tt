@@ -125,13 +125,10 @@ $(function() {
             { name: "is_active",title:"Active", type: "select", items: db.yesno, valueField: "Id", textField: "Name"
             },
         ],
-        
         delete_cnf_field: 'short_name',
         entity_name: 'Contacts',
-        
-        
 /*
-#########################################
+########################################
     Template Toolkit section
 ########################################
 */
@@ -141,7 +138,8 @@ $(function() {
     };
 
     load_jsgrid(options);
- 
+
+    $('#detailsDialog').removeAttr('hidden');
 });
 
 </script>

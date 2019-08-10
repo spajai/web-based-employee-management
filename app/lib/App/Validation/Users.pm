@@ -21,7 +21,8 @@ field username => {
 
 #Rules for is_admin
 field is_admin => {
-    mixin    => [':flg'],
+    # mixin    => [':flg'],
+    required => 1,
     messages => {
         required => 'field %s is required',
     },

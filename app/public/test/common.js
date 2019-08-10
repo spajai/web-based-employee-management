@@ -1,8 +1,7 @@
-
 function load_jsgrid(options) {
 
     var $grid = $('#' + options.grid_name);
- 
+
     var control_field = {
         type: "control",
         modeSwitchButton: false,
@@ -60,13 +59,12 @@ function load_jsgrid(options) {
             }
         },
     });
-    
+
     var saveClient = function(client, isNew) {
         var save_options = {};
         for (field of options.form_fields) {
             save_options[field] = $('#'+field).val();
         }
-        
         $.extend(client, save_options);
         $grid.jsGrid(isNew ? "insertItem" : "updateItem", client);
         $("#detailsDialog").dialog("close");
@@ -88,7 +86,6 @@ function load_jsgrid(options) {
             if ( client[field] === true ) {
                 client[field] = 1;
             }
-            
             if ( client[field] === false ) {
                 client[field] = 0;
             }
@@ -103,7 +100,6 @@ function load_jsgrid(options) {
         $("#detailsDialog").dialog("option", "title", dialogType + " Client").dialog("open");
     };
 
-    
     $("#detailsDialog").dialog({
         autoOpen: false,
         width: 400,
@@ -114,9 +110,7 @@ function load_jsgrid(options) {
     });
 }
 
-
 function build_ajax_request (options) {
-
      $.ajax({
         type: options.type,
         url: options.route,
@@ -128,8 +122,7 @@ function build_ajax_request (options) {
         },
         success:function(response){
             notification(response);
-            this.clients.push(insertingClient);
+            // this.clients.push(insertingClient);
         }
     });
-    
 }

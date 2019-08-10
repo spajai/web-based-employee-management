@@ -70,22 +70,30 @@ sub get_for_edit {
     my ( $self, $id ) = ( @_ );
 
     my $result = {
-        message => "user not found",
-        result => 0
+        message  => "user not found",
+        result   => 0,
+        method   => 'POST',
+        disabled => undef,
+        button   => 'Submit',
+        hidden   => 0,
     };
-    return $result unless ($id =~ /^[0-9]*$/);
-
-    my $dbh = $self->{_utils}->get_dbh();    #get dbh
-
-    my $sql = $self->_get_person_query();
-
-    $result = $dbh->selectrow_hashref($sql,undef,$id);
 
     $result->{validation_profile} = $self->js_validation_data();
 
     $result->{fields} = [ $self->_form_update_add_fields() ];
 
-    # $result->{form_layout} = 1;
+    return $result unless (defined $id and $id =~ /^[0-9]*$/);
+
+    my $dbh = $self->{_utils}->get_dbh();    #get dbh
+
+    my $sql = $self->_get_person_query();
+
+    %$result = (%$result, %{$dbh->selectrow_hashref($sql,undef,$id)});
+
+    $result->{method}   = 'PUT';
+    $result->{disabled} = 'disabled';
+    $result->{button}   = 'Update';
+    $result->{hidden}   = 1;
 
     return $result;
 }
@@ -139,9 +147,9 @@ sub create {
              $data->{sms_id}                      ,
              $data->{note_id}                     ,
              $data->{managed_by}                  ,
-             $data->{timezone}                    ,
+             $data->{timezone}      || 'UTC'      ,
              $data->{is_locked}                   ,
-             $data->{is_active}                   ,
+             $data->{is_active}     ||  1         ,
              $data->{created_by}                  ,
         );
         my $param = {

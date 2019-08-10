@@ -61,7 +61,7 @@
                   note_id:         updatingClient.note_id,
                   managed_by:      updatingClient.managed_by,
                   is_locked:       updatingClient.is_locked,
-                  is_active:       updatingClient.is_active,
+                  // is_active:       updatingClient.is_active,
                 }
             };
             build_ajax_request(options);
@@ -105,13 +105,13 @@ $(function() {
         db: db,
  //dynamic
         fields: [
-            { name: "salutation", type: "text", width: 150, title:"salutation" },
-            { name: "first_name", type: "text", width: 150, title:"first Name" },
-            { name: "middle_name", type: "text", width: 150, title:"middle Name" },
-            { name: "last_name", type: "text", width: 80, title:"last Name" },
+            { name: "salutation", type: "text", width: 30, title:"Salutation" },
+            { name: "first_name", type: "text", width: 50, title:"First Name" },
+            { name: "middle_name", type: "text", width: 30, title:"Middle Name" },
+            { name: "last_name", type: "text", width: 50, title:"Last Name" },
             // { name: "nick_name", type: "text", width: 150, title:"Nick Name" },
             // { name: "honorific", type: "text", width: 150, title:"honorific" },
-            { name: "email_address", type: "text", width: 150, title:"email_address" },
+            { name: "email_address", type: "text", width: 150, title:"Email" },
             { name: "phone", type: "text", width: 80, title:"Phone" },
             // { name: "sms", type: "text", width: 150, title:"User Name" },
             // { name: "note", type: "text", width: 150, title:"Note" },
@@ -124,7 +124,7 @@ $(function() {
         delete_cnf_field: 'first_name',
         entity_name: 'Person',
 /*
-#########################################
+########################################
     Template Toolkit section
 ########################################
 */

@@ -1,6 +1,6 @@
 [% USE JSON ( pretty => 1 ) %];
 
- <h1>Data Manipulation</h1>
+ <h1>Users</h1>
     <div id="jsGrid" =></div>
     <div id="detailsDialog" hidden>
         <form id="detailsForm">
@@ -32,13 +32,11 @@
                     <option value="1">Yes</option>
                 </select>
             </div>
-
             <div class="details-form-field">
                 <button type="submit" id="save">Save</button>
             </div>
         </form>
     </div>
-
 
 <script src="test/common.js"></script>
 <script>
@@ -48,7 +46,7 @@
         loadData: function(filter) {
             return $.grep(this.clients, function(client) {
                 return (!filter.username || !client.username || client.username.indexOf(filter.username) > -1)
-                    && (!filter.is_admin || client.is_admin == filter.is_admin)
+                    && (!filter.is_admin || client.is_admin === filter.is_admin)
                     && (!filter.is_active || client.is_active == filter.is_active)
                     && (!filter.permissions || client.permissions == filter.permissions)
                     && (!filter.gets_notifications || client.gets_notifications == filter.gets_notifications);
@@ -87,8 +85,8 @@
             build_ajax_request(options);
         },
         deleteItem: function(deletingClient) {
-            var clientIndex = $.inArray(deletingClient, this.clients);
-            this.clients.splice(clientIndex, 1);
+            // var clientIndex = $.inArray(deletingClient, this.clients);
+            // this.clients.splice(clientIndex, 1);
             var options = {
                 type: 'DELETE',
                 route: "/api/v1/user",
@@ -137,7 +135,7 @@ $(function() {
 
     load_jsgrid(options);
 
-$('#detailsDialog').removeAttr('hidden');
+    $('#detailsDialog').removeAttr('hidden');
 });
 
 
