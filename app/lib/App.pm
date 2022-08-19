@@ -1,41 +1,71 @@
 package App;
 use Dancer2;
 
-use App::Api::Users;
-# get '/api/v1/ticket/count' => sub {
-    # header('Content-Type' => 'application/json');
-    # return to_json $report->get_ticket_count(params->{dev} || undef);
-# };
-# post '/api/v1/admin/ticket/set-hidden' => sub {
-    # header('Content-Type' => 'application/json');
-    # return to_json { 'status' => $report->set_hidden_tickets(params->{id} || undef)};
-# };
-# get all parameters as a single hash
-    # my %all_parameters = params;
- 
-    # // request all parmameters from a specific source: body, query, route
-    # my %body_parameters  = params('body');
-    # my %route_parameters = params('route');
-    # my %query_parameters = params('query');
-# get '/api/v1/ticket/meta/:id?' => sub {
-    # header('Content-Type' => 'application/json');
-    # my $id = route_parameters->get('id') || undef;
-    # return to_json $report->get_ticket_meta($id, params->{start} || undef);
-# };
-# put '/api/v1/admin/dev' => sub {
-    # header('Content-Type' => 'application/json');
-    # my $data = from_json(request->body);
-    # return to_json { status => $dev->update_dev($data) };
-# };
+use Data::Dumper;
 
-post '/user' => sub {
-    my %body_parameters  = params('body');
-    return App::Api::Users->new->insert(\%body_parameters || {});
+use App::Api::Users;
+use App::Api::Persons;
+use App::Api::Contacts;
+use App::Api::Organizations;
+
+any  ['get','post'] => '/' => sub {
+    my $model = query_parameters->get('view');
+
+    if(defined $model ) {
+        forward '/view/'.$model;
+    }
+
+    my $form  = query_parameters->get('edit');
+    my $id    = query_parameters->get('id') || undef; #undef means new form
+    # if(defined $form && defined $id) {
+    if(defined $form) {
+        forward "/edit/$form/$id";
+    }
+
+    #DEFAULT
+    forward '/view/users';
+
 };
 
-put '/user' => sub {
-    my %body_parameters  = params('body');
-    return App::Api::Users->new->update(\%body_parameters || {});
+get '/view/users' => sub {
+    my $data =  App::Api::Users->new->get();
+    send_as html => template 'users.tt', {result_set =>  $data};
+};
+
+get '/view/organizations' => sub {
+    my $data =  App::Api::Organizations->new->get();
+    send_as html => template 'organizations.tt', {result_set =>  $data};
+};
+####################
+# person
+####################
+get '/view/persons' => sub {
+    my $data =  App::Api::Persons->new->get();
+    send_as html => template 'persons.tt', {result_set =>  $data};
+};
+    ######################
+    # person form edit
+    #######################
+    any [qw/get post/] => '/edit/person/:id' => sub {
+        my $id  = route_parameters->get('id');
+        my $data =  App::Api::Persons->new->get_for_edit($id || undef);
+        send_as html => template 'persons_edit.tt', {wrapper => undef ,result_set =>  $data};
+
+        # { wrapper => 'layouts/main.tt' };
+        # send_file 'package-lock.json';
+    };
+
+get '/view/contacts' => sub {
+    my $data =  App::Api::Contacts->new->get();
+    send_as html => template 'contacts.tt', {result_set =>  $data};
 };
 
 true;
+=pod
+get '/view/users' => sub {
+
+    my $data =  App::Api::Users->new->get();
+    send_as html => template 'users.tt', {result_set =>  $data};
+    # template 'users.tt', {result_set =>  $data};
+
+};

@@ -20,9 +20,31 @@ charset: "UTF-8"
 
 
 template: "template_toolkit"
+# engines:
+    # template:
+        # template_toolkit:
+            # WRAPPER: layouts/main.tt
 
+# serializer: "JSON"
 
-serializer: "JSON"
+# engines:
+    # serializer:
+        # JSON:
+            # allow_blessed:   '1'
+            # canonical:       '1'
+            # convert_blessed: '1'
+            # allow_nonref:    '1'
+            # boolean_values:   
+                # -0
+                # -1
+serializer: Mutable
+Mutable:
+        mapping:
+            'text/x-yaml'        : YAML
+            # 'text/html'          : YAML
+            'text/x-data-dumper' : Dumper
+            'text/x-json'        : JSON
+            'application/json'   : JSON
 
 # session engine
 #
@@ -47,3 +69,8 @@ serializer: "JSON"
 #      cookie_name: eshop.session
 #      is_secure: 1
 #      is_http_only: 1
+logger: "file"
+ 
+engines:
+  logger:
+    log: 'core'

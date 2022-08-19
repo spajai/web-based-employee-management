@@ -1,0 +1,140 @@
+[% USE JSON ( pretty => 1 ) %];
+
+ <h1>Data Manipulation</h1>
+    <div id="jsGrid"></div>
+</div>
+
+
+<script src="test/conmmon_new_form.js"></script>
+<script>
+(function() {
+    var db = {
+        loadData: function(filter) {
+            return $.grep(this.clients, function(client) {
+                return (!filter.username || !client.username || client.username.indexOf(filter.username) > -1)
+                    && (!filter.is_admin || client.is_admin == filter.is_admin)
+                    && (!filter.is_active || client.is_active == filter.is_active)
+                    && (!filter.permissions || client.permissions == filter.permissions)
+                    && (!filter.gets_notifications || client.gets_notifications == filter.gets_notifications);
+            });
+        },
+        insertItem: function(insertingClient) {
+            var options = {
+                type: 'POST',
+                route: "/api/v1/person",
+                params : {
+                  salutation:      insertingClient.salutation,
+                  first_name:      insertingClient.first_name,
+                  last_name:       insertingClient.last_name,
+                  middle_name:     insertingClient.middle_name,
+                  nick_name:       insertingClient.nick_name,
+                  honorific:       insertingClient.honorific,
+                  email_address:   insertingClient.email_address,
+                  phone_id:        insertingClient.phone_id,
+                  sms_id:          insertingClient.sms_id,
+                  note_id:         insertingClient.note_id,
+                  managed_by:      insertingClient.managed_by,
+                  is_locked:       insertingClient.is_locked,
+                  is_active:       insertingClient.is_active,
+                  created_by: "2"
+                }
+            };
+
+            build_ajax_request(options);
+        },
+
+      updateItem: function(updatingClient) {
+            var options = {
+                type: 'PUT',
+                route: "/api/v1/person",
+               params : {   
+                  id:              updatingClient.id,
+                  salutation:      updatingClient.salutation,
+                  first_name:      updatingClient.first_name,
+                  last_name:       updatingClient.last_name,
+                  middle_name:     updatingClient.middle_name,
+                  nick_name:       updatingClient.nick_name,
+                  honorific:       updatingClient.honorific,
+                  email_address:   updatingClient.email_address,
+                  phone_id:        updatingClient.phone_id,
+                  sms_id:          updatingClient.sms_id,
+                  note_id:         updatingClient.note_id,
+                  managed_by:      updatingClient.managed_by,
+                  is_locked:       updatingClient.is_locked,
+                  // is_active:       updatingClient.is_active,
+                }
+            };
+            build_ajax_request(options);
+        },
+        deleteItem: function(deletingClient) {
+            var clientIndex = $.inArray(deletingClient, this.clients);
+            this.clients.splice(clientIndex, 1);
+            var options = {
+                type: 'DELETE',
+                route: "/api/v1/person",
+                params: {
+                  first_name:      deletingClient.first_name,
+                  last_name:       deletingClient.last_name,
+                  middle_name:     deletingClient.middle_name,
+                  email_address:   deletingClient.email_address,
+                  id:              deletingClient.id
+                }
+            };
+            build_ajax_request(options);
+        }
+    };
+    window.db = db;
+    db.yesno = [
+        { Name: "", Id: undefined},
+        { Name: "No", Id: false },
+        { Name: "Yes", Id: true },
+    ];
+/*
+#########################################
+    Template Toolkit section
+########################################
+*/
+    db.clients = [% result_set.data %];
+
+}());
+
+
+$(function() {
+    var options = {
+        grid_name: 'jsGrid',
+        db: db,
+ //dynamic
+        fields: [
+            { name: "salutation", type: "text", width: 30, title:"Salutation" },
+            { name: "first_name", type: "text", width: 50, title:"First Name" },
+            { name: "middle_name", type: "text", width: 30, title:"Middle Name" },
+            { name: "last_name", type: "text", width: 50, title:"Last Name" },
+            // { name: "nick_name", type: "text", width: 150, title:"Nick Name" },
+            // { name: "honorific", type: "text", width: 150, title:"honorific" },
+            { name: "email_address", type: "text", width: 150, title:"Email" },
+            { name: "phone", type: "text", width: 80, title:"Phone" },
+            // { name: "sms", type: "text", width: 150, title:"User Name" },
+            // { name: "note", type: "text", width: 150, title:"Note" },
+            // { name: "is_locked", type: "select", items: db.yesno,title:"is_locked", valueField: "Id", textField: "Name" },
+            // { name: "gets_notifications", title:"Gets Notification",type: "select", items: db.yesno, valueField: "Id", textField: "Name" },
+            // { name: "permissions", type: "select",title:"Permissions", items: db.yesno, valueField: "Id", textField: "Name" },
+            { name: "is_active",title:"Active", type: "select", items: db.yesno, valueField: "Id", textField: "Name"
+            },
+        ],
+        delete_cnf_field: 'first_name',
+        entity_name: 'Person',
+/*
+########################################
+    Template Toolkit section
+########################################
+*/
+        form_fields: [% result_set.fields.json -%],
+        validation_rules: [% result_set.validation_profile.rules -%],
+        validation_messages: [% result_set.validation_profile.messages -%]
+    };
+
+    load_jsgrid(options);
+
+});
+
+</script>

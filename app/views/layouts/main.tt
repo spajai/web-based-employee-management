@@ -1,22 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="<% settings.charset %>">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title><% title %></title>
-  <link rel="stylesheet" href="<% request.uri_base %>/css/style.css">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="">
+      <meta name="author" content="spajai">
+      <title>Admin Control App by spajai</title>
+      <link rel="stylesheet" href="test_css/jquery-ui.min.css">
+      <link rel="stylesheet" href="test_css/jquery-ui.structure.min.css">
+      <link rel="stylesheet" href="test_css/jquery-ui.theme.min.css">
 
-<!-- Grab jQuery from a CDN, fall back to local if necessary -->
-<script src="//code.jquery.com/jquery-3.4.1.min.js"></script>
-<script type="text/javascript">/* <![CDATA[ */
-    !window.jQuery && document.write('<script type="text/javascript" src="<% request.uri_base %>/javascripts/jquery.js"><\/script>')
-/* ]]> */</script>
+      <!-- Bootstrap core CSS -->
+      <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+      <!-- Custom styles for this template -->
+      <link href="css/simple-sidebar.css" rel="stylesheet">
+      <link href="test_css/custom.css" rel="stylesheet">
+      <!-- js grid  -->
+      <link type="text/css" rel="stylesheet" href="css/jsgrid.min.css" />
+      <link type="text/css" rel="stylesheet" href="css/jsgrid-theme.min.css" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+      <!-- include the style -->
+      <link rel="stylesheet" href="css/alertify.min.css" />
+      <!-- include a theme -->
+      <link rel="stylesheet" href="css/themes/default.min.css" />
+      <link rel="stylesheet" type="text/css" href="css/demos.css" />
+      <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600,400' rel='stylesheet' type='text/css'>
+      <!-- Notificatipon js -->
+       <script src="vendor/jquery/jquery.min.js"></script>
 
-</head>
-<body>
-<% content %>
-<div id="footer">
-Powered by <a href="http://perldancer.org/">Dancer2</a> <% dancer_version %>
-</div>
-</body>
+
+          <script src="/test/pace.min.js"></script>
+         <link href="/test/themes/blue/pace-theme-minimal.css" rel="stylesheet" />
+
+      
+      <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <script src="test/ui_1.12.1_jquery-ui.js"></script>
+      <script src="js/alertify.min.js"></script>
+      <!-- [% IF result_set.form_layout %] -->
+      <!-- <script src="test/conmmon_new_form.js"></script> -->
+      <!-- [% ELSE %] -->
+      <!-- <script src="test/common.js"></script> -->
+      <!-- [% END %] -->
+      <!-- js grid and all custom -->
+      <!-- <script type="text/javascript" src="js/jsgrid.min.js"></script> -->
+      <script type="text/javascript" src="test/jquery.validate.min.js"></script>
+      <script src="test/jsgrid.all.min.js"></script>
+      
+   </head>
+   <body>
+      <div class="d-flex" id="wrapper">
+         <!-- Sidebar -->
+         <div class="bg-light border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading">Admin Panel </div>
+            <div class="list-group list-group-flush">
+               <a href="/?view=users" class="list-group-item list-group-item-action bg-light">Users</a>
+               <a href="/?view=persons" class="list-group-item list-group-item-action bg-light">Persons</a>
+               <a href="/?view=contacts" class="list-group-item list-group-item-action bg-light">Contacts</a>
+               <a href="/?view=organizations" class="list-group-item list-group-item-action bg-light">Organizations</a>
+            </div>
+         </div>
+         <!-- /#sidebar-wrapper -->
+         <!-- Page Content -->
+         <div id="page-content-wrapper">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+               <button class="btn btn-primary" id="menu-toggle">Hide Menu</button>&nbsp;&nbsp;
+               <button class="btn btn-secondary" onclick="javascript:window.history.back();">Back</button>
+               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+               <span class="navbar-toggler-icon"></span>
+               </button>
+            </nav>
+            <div class="container-fluid">
+            [% content %]
+            </div>
+         </div>
+      </div>
+      
+      <!-- Menu Toggle Script -->
+      <script>
+        $.fn.serializeObject = function()
+        {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+      
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+        
+        function notification (response){
+            if(response){
+                 if(response.result == 1) {
+                    alertify.success(response.message); 
+                    //window.location.reload();
+                    $("#jsGrid").jsGrid("refresh");
+
+                 }
+                 if(response.result == 0 ) {
+                    alertify.error(response.message); 
+                 }
+                 if(response.result == -1 ) {
+                    alertify.warning(response.message); 
+                 }
+           } else {
+                alertify.error("No response from server");
+           }
+        }
+
+        alertify.set('notifier','position', 'top-right');
+
+      </script>
+   </body>
 </html>

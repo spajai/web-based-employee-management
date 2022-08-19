@@ -1,0 +1,145 @@
+[% USE JSON ( pretty => 1 ) %];
+
+ <h1>Data Manipulation</h1>
+    <div id="jsGrid"></div>
+    <div id="detailsDialog" hidden>
+
+        <form id="detailsForm">
+            <div class="details-form-field">
+                <label for="short_name">short_name</label>
+                <input id="short_name" name="short_name" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="address_list_id">address_list_id</label>
+                <input id="address_list_id" name="address_list_id" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="person_id">person_id</label>
+                <input id="person_id" name="person_id" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="phone">pone</label>
+                <input id="phone" name="phone" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="note_id">note</label>
+                <input id="note_id" name="note" type="textarea" />
+            </div>
+            <div class="details-form-field">
+                <label for="description">description</label>
+                <input id="description" name="description" type="textarea" />
+            </div>
+            <div class="details-form-field">
+                <label for="is_active">is_active:</label>
+                <select id="is_active" name="is_active">
+                    <option value="">(Select)</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
+
+            <div class="details-form-field">
+                <button type="submit" id="save">Save</button>
+            </div>
+        </form>
+    </div>
+<script src="test/common.js"></script>
+<script>
+(function() {
+
+    var db = {
+        loadData: function(filter) {
+            return $.grep(this.clients, function(client) {
+                return (!filter.username || !client.username || client.username.indexOf(filter.username) > -1)
+                    && (!filter.is_admin || client.is_admin == filter.is_admin)
+                    && (!filter.is_active || client.is_active == filter.is_active)
+                    && (!filter.permissions || client.permissions == filter.permissions)
+                    && (!filter.gets_notifications || client.gets_notifications == filter.gets_notifications);
+            });
+        },
+
+        insertItem: function(insertingClient) {
+            var options = {
+                type: 'POST',
+                route: "/api/v1/contact",
+                params: insertingClient
+            };
+            build_ajax_request(options);
+        },
+
+        updateItem: function(updatingClient) {
+             var options = {
+                type: 'PUT',
+                route: "/api/v1/contact",
+                params: updatingClient
+            };
+            build_ajax_request(options);
+        },
+
+        deleteItem: function(deletingClient) {
+            var clientIndex = $.inArray(deletingClient, this.clients);
+            this.clients.splice(clientIndex, 1);
+              var options = {
+                type: 'DELETE',
+                route: "/api/v1/contact",
+                params: {
+                    short_name:   deletingClient.short_name,
+                    id:           deletingClient.id
+                }
+            };
+
+            build_ajax_request(options);
+        }
+
+    };
+
+    window.db = db;
+    db.yesno = [
+        { Name: "", Id: undefined},
+        { Name: "No", Id: false },
+        { Name: "Yes", Id: true },
+    ];
+/*
+#########################################
+    Template Toolkit section
+########################################
+*/
+    db.clients = [% result_set.data %];
+
+}());
+
+
+$(function() {
+ 
+    var options = {
+        grid_name: 'jsGrid',
+        db: db,
+        fields: [
+            { name: "short_name", type: "text", width: 150, title:"short name" },
+            { name: "description", type: "textarea", width: 150, title:"description" },
+            // { name: "person_id", type: "text", width: 150, title:"person_id" },
+            // { name: "address_list_id", type: "text", width: 150, title:"address_list_id" },
+            // { name: "note_id", type: "text", width: 150, title:"note_id" },
+            { name: "email_address", type: "text", width: 150, title:"User Name" },
+            { name: "note", type: "text", width: 150, title:"User Name" },
+            { name: "is_active",title:"Active", type: "select", items: db.yesno, valueField: "Id", textField: "Name"
+            },
+        ],
+        delete_cnf_field: 'short_name',
+        entity_name: 'Contacts',
+/*
+########################################
+    Template Toolkit section
+########################################
+*/
+        form_fields: [% result_set.fields.json -%],
+        validation_rules: [% result_set.validation_profile.rules -%],
+        validation_messages: [% result_set.validation_profile.messages -%]
+    };
+
+    load_jsgrid(options);
+
+    $('#detailsDialog').removeAttr('hidden');
+});
+
+</script>

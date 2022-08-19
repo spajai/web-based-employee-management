@@ -1,0 +1,26 @@
+//this file has common settings for js grid
+
+        autoload: true,
+        height: "auto",
+        width: "100%",
+        editing: true,
+        paging: true,
+        pageSize: 10,
+        sorting: true,
+        filtering: true,
+        sorter: "string",
+        pageButtonCount: 15,
+        noDataContent: "No Data",
+        deleteButtonTooltip: "Delete",
+        searchButtonTooltip: "Search",
+        clearFilterButtonTooltip: "Clear filter",
+        confirmDeleting: false,
+        rowClass: function(item, itemIndex) {
+            return item.is_active == 0 ? 'bg-red' : '';
+        },
+        rowClick: function(args) {
+            if(args.item.is_active == 1){
+                console.log(args.item);
+                showDetailsDialog("Edit", args.item);
+            }
+        },

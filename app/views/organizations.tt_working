@@ -1,0 +1,357 @@
+ <h1>Data Manipulation</h1>
+    <div id="jsGrid"></div>
+    <div id="detailsDialog">
+
+        <form id="detailsForm">
+            <div class="details-form-field">
+                <label for="organization_name">organization_name</label>
+                <input id="organization_name" name="organization_name" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="organization_type_id">organization_type_id</label>
+                <input id="organization_type_id" name="organization_type_id" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="organization_contact_id">organization_contact_id</label>
+                <input id="organization_contact_id" name="organization_contact_id" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="organization_address_id">organization_address_id</label>
+                <input id="organization_address_id" name="organization_address_id" type="text" />
+            </div>
+            <div class="details-form-field">
+                <label for="note_id">note</label>
+                <input id="note_id" name="note" type="textarea" />
+            </div>
+            <div class="details-form-field">
+                <label for="is_active">is_active:</label>
+                <select id="is_active" name="is_active">
+                    <option value="">(Select)</option>
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
+                </select>
+            </div>
+
+            <div class="details-form-field">
+                <button type="submit" id="save">Save</button>
+            </div>
+        </form>
+    </div>
+<script>
+
+
+
+
+
+(function() {
+     alertify.set('notifier','position', 'top-right');
+
+    var db = {
+        loadData: function(filter) {
+            return $.grep(this.clients, function(client) {
+                
+                return (!filter.username || !client.username || client.username.indexOf(filter.username) > -1)
+                    && (!filter.is_admin || client.is_admin == filter.is_admin)
+                    && (!filter.is_active || client.is_active == filter.is_active)
+                    && (!filter.permissions || client.permissions == filter.permissions)
+                    && (!filter.gets_notifications || client.gets_notifications == filter.gets_notifications);
+            });
+        },
+
+        insertItem: function(insertingClient) {
+            console.log(insertingClient);
+            //add on sucees push
+            this.clients.push(insertingClient);
+            //add on sucees push
+            //add on sucees push
+             var param = {};
+            for (const [ key, value ] of Object.entries(insertingClient)) {
+                console.log(key, value);
+
+                if (value === true) {
+                     param[key] = 1;
+                }else if (value === false) {
+                     param[key] = 0;
+                } else {
+                    param[key] = value;
+                
+                }
+            }
+             $.ajax({
+                type: "POST",
+                url: "/api/v1/organizations",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                dataType: "JSON",
+                error : function(xhr, textStatus, errorThrown) {
+                    alertify.error(errorThrown); 
+
+                    // noty({text: errorThrown, type: "error", layout: "topRight"});
+                },
+                success:function(response){
+                if(response){
+                    //deprecate noty
+                    // noty({text: response.message, type: map[response.result], layout: "topRight"});
+                     if(response.result == 1) {
+                        alertify.success(response.message); 
+                     }
+                     if(response.result == 0 ) {
+                        alertify.error(response.message); 
+                     }
+                     if(response.result == -1 ) {
+                        alertify.warning(response.message); 
+                     }
+                   }
+                }
+            });
+            
+            
+        },
+
+        updateItem: function(updatingClient) {
+            var param = {};
+            for (const [ key, value ] of Object.entries(updatingClient)) {
+                console.log(key, value);
+
+                if (value === true) {
+                     param[key] = 1;
+                }else if (value === false) {
+                     param[key] = 0;
+                } else {
+                    param[key] = value;
+                
+                }
+            }
+         $.ajax({
+                type: "PUT",
+                url: "/api/v1/organizations",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+                dataType: "JSON",
+                
+                error : function(xhr, textStatus, errorThrown) {
+                    alertify.error(errorThrown); 
+
+                    // noty({text: errorThrown, type: "error", layout: "topRight"});
+                },
+                success:function(response){
+                if(response){
+                    //deprecate noty
+                    // noty({text: response.message, type: map[response.result], layout: "topRight"});
+                     if(response.result == 1) {
+                        alertify.success(response.message); 
+                     }
+                     if(response.result == 0 ) {
+                        alertify.error(response.message); 
+                     }
+                     if(response.result == -1 ) {
+                        alertify.warning(response.message); 
+                     }
+                   }
+                }
+                
+            });
+        },
+
+        deleteItem: function(deletingClient) {
+            var clientIndex = $.inArray(deletingClient, this.clients);
+            this.clients.splice(clientIndex, 1);
+            //reload page
+             var param = {
+                "username": deletingClient.short_name,
+                "id": deletingClient.id
+            };
+             $.ajax({
+                type: "DELETE",
+                url: "/api/v1/organizations",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(param),
+
+                error : function(xhr, textStatus, errorThrown) {
+                    noty({text: errorThrown, type: "error", layout: "topRight"});
+                },
+                success:function(response){
+                if(response){
+                    //deprecate noty
+                    // noty({text: response.message, type: map[response.result], layout: "topRight"});
+                     if(response.result == 1) {
+                        alertify.success(response.message); 
+                     }
+                     if(response.result == 0 ) {
+                        alertify.error(response.message); 
+                     }
+                     if(response.result == -1 ) {
+                        alertify.warning(response.message); 
+                     }
+
+                   }
+                }
+            });
+            
+            
+        }
+
+    };
+
+    window.db = db;
+
+
+    db.yesno = [
+        { Name: "", Id: undefined},
+        { Name: "No", Id: false },
+        { Name: "Yes", Id: true },
+    ];
+
+
+    db.clients = [% result_set.data %];
+
+}());
+
+
+$(function() {
+ 
+    $("#jsGrid").jsGrid({
+
+        autoload: true,
+        // height: "100%",
+        height: "auto",
+        // height: "200%",
+        width: "100%",
+        editing: true,
+        paging: true,
+        pageSize: 10,
+        sorting: true,
+        filtering: true,
+        sorter: "string",
+
+
+
+
+
+        pageButtonCount: 15,
+        noDataContent: "No Data",
+
+    deleteButtonTooltip: "Delete",                  // tooltip of delete item button
+    searchButtonTooltip: "Search",                  // tooltip of search button
+    clearFilterButtonTooltip: "Clear filter",       // tooltip of clear filter button
+
+
+
+
+
+        confirmDeleting: false,
+
+
+        
+        rowClass: function(item, itemIndex) {
+            return item.is_active == 0 ? 'bg-red' : '';
+        },
+        
+        rowClick: function(args) {
+            if(args.item.is_active == 1){
+                console.log(args.item);
+                showDetailsDialog("Edit", args.item);
+            }
+            
+        },
+        controller: db,
+
+ //dynamic
+    
+
+        fields: [
+            { name: "organization_name", type: "text", width: 150, title:"organization name" },
+            { name: "organization_type_id", type: "textarea", width: 150, title:"organization_type_id" },
+            { name: "organization_contact_id", type: "text", width: 150, title:"organization_contact_id" },
+            { name: "organization_address_id", type: "text", width: 150, title:"organization_address_id" },
+            { name: "is_active",title:"Active", type: "select", items: db.yesno, valueField: "Id", textField: "Name"
+            },
+
+            {
+                type: "control",
+                modeSwitchButton: false,
+                editButton: false,
+                itemTemplate: function(value, item) {
+                var $result = $([]);
+                if(item.is_active==1) {
+                    $result = $result.add(this._createDeleteButton(item));
+                }
+                    return $result;
+                },
+                headerTemplate: function() {
+                    return $("<button>").attr("type", "button").text("Add")
+                    .on("click", function () {
+                        showDetailsDialog("Add", {});
+                    });
+                }
+            },
+        ],
+        onItemDeleting: function (args) {
+            if (!args.item.deleteConfirmed) { // custom property for confirmation
+                args.cancel = true; // cancel deleting
+                alertify.confirm("The User \"" + args.item.email_address + "\" will be removed. Are you sure?",
+                  function(){
+                      args.item.deleteConfirmed = true;
+                      $("#jsGrid").jsGrid('deleteItem', args.item); //call deleting once more in callback
+              }).setHeader('<em> Confirm Delete </em>');
+            }
+        },
+    });
+ 
+    $("#detailsDialog").dialog({
+        autoOpen: false,
+        width: 400,
+        close: function() {
+            $("#detailsForm").validate().resetForm();
+            $("#detailsForm").find(".error").removeClass("error");
+        }
+    });
+ 
+    $("#detailsForm").validate({
+       "rules": [% result_set.validation_profile.rules -%],
+       "messages": [% result_set.validation_profile.messages -%],
+    submitHandler: function() {
+            formSubmitHandler();
+        }
+    });
+    var formSubmitHandler = $.noop;
+ 
+    var showDetailsDialog = function(dialogType, client) {
+
+
+      
+        $("#organization_name").val(client.organization_name);
+        $("#organization_type_id").val(client.organization_type_id);
+        $("#organization_contact_id").val(client.organization_contact_id);
+        $("#organization_address_id").val(client.organization_address_id);
+        $("#note_id").val(client.note_id);
+        $("#email_address").val(client.email_address);
+        $("#is_active").val(client.is_active);
+ 
+        formSubmitHandler = function() {
+            saveClient(client, dialogType === "Add");
+        };
+ 
+        $("#detailsDialog").dialog("option", "title", dialogType + " Client")
+                .dialog("open");
+    };
+ 
+    var saveClient = function(client, isNew) {
+
+        $.extend(client, {
+            organization_name: $("#organization_name").val(),
+            organization_type_id: $("#organization_type_id").val(),
+            organization_contact_id: $("#organization_contact_id").val(),
+            organization_address_id: $("#organization_address_id").val(),
+            note_id: $("#note_id").val(),
+            is_active: $("#is_active").val()
+        });
+ 
+        $("#jsGrid").jsGrid(isNew ? "insertItem" : "updateItem", client);
+ 
+        $("#detailsDialog").dialog("close");
+    };
+ 
+});
+
+</script>

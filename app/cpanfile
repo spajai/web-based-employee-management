@@ -14,3 +14,5 @@ on "test" => sub {
 # File::FindLib;
 # SQL::Abstract
 # DateTime::Format::Flexible
+# Template::Plugin::JSON
+# Dancer2::Logger::File 
